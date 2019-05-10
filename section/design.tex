@@ -1,0 +1,208 @@
+\section{Design}
+\label{design}
+
+\begin{figure}[t]
+\centerline{\includegraphics[width=0.45\textwidth]{architecture.jpg}}
+\caption{Framework for Hyperparameter Optimization in Security Bug Report Prediction.}    
+\label{figure:framework}
+\end{figure}
+
+\subsection{Overview}
+Figure~\ref{figure:framework} show the general framework of our proposed approaches. Basically, our work in this paper can be divided into two parts. On the one hand, we propose to use an optimizer called differential evolution (DE) to search for optimal configurations in different learners. On the other hand, we propose to leverage a novel oversampling technique called SMOTE to address the imbalanced class problem in bug report prediction. 
+
+\subsection{Differential Evolution Optimizer}
+In machine learning, an optimizer is usually working on a higher level of various learners to automatically tune learners' configurations. In simpler terms, optimizers shape the models into their most accurate possible forms in order to achieve optimal performance. There are a couple of optimizers that have been frequently used in software engineering area. In this paper, we choose a novel optimizer called differential evolution (DE) in tuning learners' hyperparameters.
+
+% \textcolor{red}{why we use optimizer, because optimizers can greatly improve data miners}~\cite{agrawal2018better}, and \textcolor{red}{explain why we choose DE, FLASH and Tabu Search in our paper}.
+
+When solving a global optimization problem, our natural requirement is to find an acceptable approximation of the global minimum point as quickly as possible. Differential evolution (DE)~\cite{storn1997differential} is one of the most popular heuristics for global optimization, and it has been successfully applied in various areas, where used as a method for parametric identification of complex models. In most scenarios, DE as a population-based method requires a very large number of fitness evaluations (which also means a large mount of computation time) in order to achieve an acceptable result. 
+
+Basically, the differential evolution algorithm is a type of evolutionary algorithm~\cite{back1996evolutionary} in which the fittest individuals of a population are the ones that produce more offspring and therefore inherit the good traits of the parents. An iterative mutation algorithm where vector differences are used to create new candidate solutions. There are four steps in  differential evolution algorithm: \textit{initialization}, \textit{mutation}, \textit{crossover}, and \textit{selection}. 
+
+\textbf{Initialization.} The first step is to create a population of individuals. An individual is an instantiating of the parameters of target function, in which works by generating random values for each parameter within the given bounds. This step also applies each individual of the population to the target function, and we keep the one with the best values after evaluation.
+
+\textbf{Mutation.} For each individual in the population, we select three other individuals that are not the current one. We create a mutant individual by combining these three individuals, in which we compute the difference between two individuals and add that difference to the rest individual after multiplying a mutation factor to the difference. The mutation factor is a positive number usually less than 1.0 that controls the amplification difference between two individuals, and it is also used to avoid stagnation in the search process.
+
+\textbf{Crossover.} The crossover process is to mix the information of the mutant with the information of the current individual to create a trail individual. This is done by changing the value at some position in the current individual with the ones in the mutant individual. For each position, we decide if the place to be replaced or not by crossover point. We generate the uniform random values between [0,1] and check if the values are less than the crossover point.
+
+\textbf{Selection.} After generating our new trial vector, we need to denormalize it and evaluate it to measure how good it is by applying it to the target function. If this mutant is better than the current vector then we replace it with the new one. Otherwise, the trail individual is discarded. As a result, all the individuals of the next generation are as good as or better than their counterparts in the current generation.
+
+All the above steps have to be repeated again for the remaining individuals, which completes the first iteration of the algorithm. After this process, some of the original vectors of the population will be replaced by better ones, and after many iterations, the whole population will eventually converge towards the optimal solution. Algorithm~\ref{algorithm:DE} shows the pseudocode of differential evolution algorithm.
+
+\begin{algorithm}[t]
+\small
+\hspace{0.2cm}\begin{lstlisting}[xrightmargin=5.0ex,mathescape,frame=none,numbers=right]
+def DE(np, cf, f):
+  frontier = sets of guesses
+  best = frontier.1 # any value at all
+  lives = 1
+  while (lives-->0):
+    tmp = empty
+    for i = 1 to |frontier|: # size of frontier
+        old = frontier
+        x,y,z = any three from frontier, picked at random
+        new = copy(old)
+        for j = 1 to |new|: # for all attributes
+        if rand() < cf: # at probability cf
+            new.j = x.j + f * (z.j - y.j) # ... change item j
+        # end for
+        new = new if better(new, old) else old
+        tmp_i = new
+        if better(new, best) then
+            best = new
+            lives++ # enable one more generation
+        end
+    # end for
+    frontier = tmp
+  # end while
+  return best
+  
+\end{lstlisting}
+\caption{Pseudocode of Differential Evolution}
+\label{algorithm:DE}  
+\end{algorithm}
+
+\textbf{DE Parameters.} There are four parameters in differential algorithms, the mutation factor \textit{F}, crossover constant \textit{CR}, the size of population \textit{NP} and the number of iteration \textit{ITER}. Base on the previous advice from developers\footnote{http://cci.lbl.gov/cctbx\_sources/scitbx/differential\_evolution.py}, the following classical setting for the input can be considered. 1) Set the number of the population \textit{NP} to $10$ times the number of parameters. 2) Set mutation factor $\textit{F}=0.8$. Recent studies have found that selecting \textit{F} from the interval $[0.5, 1.0]$ randomly for each generation or for each difference vector improves convergence behaviour significantly, especially for noisy objective functions. 3) Set crossover constant $\textit{CR}=0.9$. It has also been found that setting \textit{CR} to a low value, e.g. $\textit{CR}=0.2$ helps optimizing separable functions since it fosters the search along the coordinate axes. On the contrary this choice is not effective if parameter dependence is encountered, something which is frequently occurring in real-world optimization problems rather than artificial test functions. So for parameter dependence the choice of $\textit{CR}=0.9$ is more appropriate. 4) Set the number of iteration \textit{ITER} to $3$, $10$, which are denoted as DE$3$ and DE$10$ respectively. A small number ($2$) is used to test the effects of a very CPU-light effort estimator. A larger number ($10$) is selected to check if anything is lost by restricting the inference to small iterations. Table~\ref{tbl:DEpara} lists all the DE parameters for different learners. 
+
+% However, we need to keep in mind that different problems often require different settings for NP, F and CR. In our work, to make the parameter setting problem simple, we follow the suggested advice, i.e., set NP to 40 for tuning CART (we have 4 hyper-parameters to tune in CART) and 60 when tuning Random Forest (we have 6 hyper-parameters to tune in Random Forest). We also set F = 0.8 and CR = 0.9. In addition, the iteration is set to 100, which we believe is enough for us to achieve optimal solution, and can be comparable when we consider tuning time between parallel DE and our baseline, i.e., traditional sequential DE.
+
+\begin{table}[!htbp]
+\caption {List of parameters in DE algorithm for different learners.}
+% \normalsize
+\centering
+\begin{tabular}{l|c|c|c|c}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}} & \multicolumn{4}{c}{\cellcolor[HTML]{EFEFEF}\textbf{DE Parameter}} \\ \cline{2-5} 
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Learner}}} & \textbf{NP} & \textbf{F} & \textbf{CR} & \textbf{ITER} \\ \hline
+Random Forest & 60 &  &  &  \\ \cline{1-2}
+Logistic Regression & 30 &  &  &  \\ \cline{1-2}
+Multilayer Perceptron & 60 &  &  &  \\ \cline{1-2}
+K Nearest Neighbor & 20 &  &  &  \\ \cline{1-2}
+Naive Bayes & 10 & \multirow{-5}{*}{0.8} & \multirow{-5}{*}{0.9} & \multirow{-5}{*}{3, 10} \\ \hline
+\end{tabular}
+\label{tbl:DEpara}
+\end{table}
+
+
+% \subsubsection{FLASH} FLASH~\cite{nair2017flash}~\cite{nair2018finding} is a sequential model-based method such as Bayesian optimization, is a useful strategy to find extremes of an unknown objective. FLASH is efficient because of its ability to incorporate prior belief as already measured solutions (or configurations), to help direct further sampling. Here, the prior represents the already known areas of the search (or performance optimization) problem. The prior can be used to estimate the rest of the points (or unevaluated configurations). Once one (or many) points are evaluated based on the prior, the posterior can be defined. The posterior captures the updated belief in the objective function. This step is performed by using a machine learning model, also called surrogate model. \textcolor{red}{to be continued...}
+
+
+% \begin{algorithm}
+% \small
+% \hspace{0.2cm}\begin{lstlisting}[xrightmargin=5.0ex,mathescape,frame=none,numbers=right]
+% def FLASH(uneval_configs, fitness, size, life):
+%   # Add |size| number of randomly selected configurations to training data. 
+%   # All the randomly selected configurations are measured
+%   eval_configs = [measure(x) for x in sample(uneval_configs, size)]
+%   # Remove the evaluations configuration from data
+%   uneval_configs.remove(eval_configs)
+%   # Till all the lives has been lost
+%   while life > 0:
+%     # build one CART model per objective
+%     for o in objectives: model[o] = CART(eval_configs)
+%     # Find and measure another point based on acquisition function
+%     acquired_point = measure(acquisition_fn(uneval_configs, model))
+%     eval_configs += acquired_point  # Add acquired point 
+%     uneval_config -= acquired_point # Remove acquired point 
+%     # Stopping Criteria
+%     life -= 1
+%   return best
+  
+% def acquisition_fn(uneval_configs, model, no_directions=10):  
+%   # Predict the value of all the unevaluated configurations using model
+%   predicted = model.predict(uneval_configs)
+%   # If number of objectives is greater than 1 (In our setting len(objectives) = 2)
+%   if len(objectives) > 1: # For multi-objective problems
+%     return  Bazza( predicted )
+%   else:  # For single-objective problems
+%     return max(predicted)  
+% \end{lstlisting}
+% \caption{Pseudocode of FLASH}
+% \label{fig:flash_frame}  
+% \end{algorithm}
+
+% \subsubsection{Tabu Search} Tabu Search using $\epsilon$-dominance, DART~\cite{fu2018building} is a meta-heuristic search method employing local search methods used for mathematical optimization. Tabu search uses a local or neighborhood search procedure to iteratively move from one potential solution x to an improved solution x' in the neighbourhood of x, until some stopping criterion has been satisfied~\cite{chen2018beyond}~\cite{du2013handbook}.  \textcolor{red}{to be continued...}
+
+
+
+
+% \begin{table*}[!htb]
+% \caption {Comparison of Hyperparameters of used learners in Weka and Scikit-learn.}
+% \begin{tabular}{|l|l|l|}
+% \hline
+% \multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{Learner}}} & \multicolumn{2}{c|}{\textbf{Hyperparameter}} \\ \cline{2-3} 
+% \multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{\textbf{Weka}} & \multicolumn{1}{c|}{\textbf{Scikit-learn}} \\ \hline
+% Random Forest & \begin{tabular}[c]{@{}l@{}}bagSizePercent: 100\\ batchSize: 100\\ breakTiesRandomly: False\\ calcOutOfBag: False\\ computeAttributeImportance: False\\ debug: False\\ doNotCheckCapabilities: False\\ maxDepth: 0\\ numDecimaalPlaces: 2\\ numExecutionSlots: 1\\ numFeatures: 0\\ numIteration: 100\\ outputOutOfBagComplexityStatistics: Fasle\\ printClassifier: False\\ seed: 1\\ storeOutOfBagPredictions: False\end{tabular} &  \\ \hline
+% Naive Bayes & \begin{tabular}[c]{@{}l@{}}batch size: 100\\ debug: False\\ displayModelInOldFormat: False\\ numDecimalPlaces: 2\\ useKernelEstimator: False\\ useSupervisedDiscretization: False\end{tabular} &  \\ \hline
+% Logistic Regression & \begin{tabular}[c]{@{}l@{}}batchSize: 100\\ debug: False\\ doNotCheckCapabilities: False\\ maxIts: -1\\ numDecimalPlaces: 4\\ ridge: 1.0E-8\\ useConjugateGradientDescent: False\end{tabular} &  \\ \hline
+% KNN & \begin{tabular}[c]{@{}l@{}}KNN: 1\\ batchSize: 100\\ crossValidate: False\\ debug: False\\ distanceWeighting: No distance weighting\\ doNotCheckCapabilities: False\\ meanSqured: False\\ nearestNeighbourSearchAlgorithm: LinearNNSearch\\ numDecimalPlaces: 2\\ windowSize: 0\end{tabular} &  \\ \hline
+% Multilayer Perceptron & \begin{tabular}[c]{@{}l@{}}GUI: False\\ autoBuild: True\\ batchSize: 100\\ debug: False\\ decay: False\\ doNotCheckCapabilities: False\\ hiddenLayers: a\\ learningRate: 0.3\\ momentum: 0.2\\ nominalToBinaryFilter: True\\ normalizeAttributes: True\\ normalizeNumericClass: True\\ numDecimalPlaces: 2\\ reset: True\\ seed: 0\\ trainingTime: 500\\ validationSetSize: 0\\ validationThreshold: 20\end{tabular} &  \\ \hline
+% \end{tabular}
+% \end{table*}
+
+\subsection{Data Balancing with SMOTE}
+
+
+
+Imbalanced data typically refers to an issue with classification problems where the classes are not equally represented. For example, in a binary classification problem, the ratio of class $0$ and $1$ is $99:1$. There are many reasons why a dataset might be imbalanced, e.g., the data might simply be difficult to collect, or the category that we are targeting might be very rare in the population. A direct impact by imbalanced dataset is that the learned model will be biased. 
+
+A number of methods are available to oversample a dataset used in a typical classification problem.
+SMOTE~\cite{chawla2002smote} (Synthetic Minority Oversampling Technique), as a novel oversampling technique, works by creating synthetic samples based on the existing minority samples rather than replicating the minority samples. SMOTE takes the whole dataset as input, and increases the percentage of the minority class. As a result, the increasement of the instances available to each class makes the dataset more balanced. 
+
+To be specific, SMOTE calculates the $k$ nearest neighbors for each minority class samples. Depending on the amount of oversampling required, one or more of the $k$-nearest neighbors are picked to create the synthetic samples. This amount is usually denoted by oversampling percentage (e.g., $50\%$ by default). The next step is to randomly create a synthetic sample along the line connecting two minority samples. This can be illustrated in Figure~\ref{figure:SMOTE} where the blue dots represent the minority class sample, and the red dots represent the synthetic samples.  
+
+\begin{figure}[t]
+\centerline{\includegraphics[width=0.4\textwidth]{SMOTE.jpg}}
+\caption{An Illustration on How the SMOTE Technique Works.}    
+\label{figure:SMOTE}
+\end{figure}
+
+Agrawal et al.~\cite{agrawal2018better} used an updated SMOTE in handling the data imbalanced problem in software defect prediction. In their work, the SMOTE algorithm can be broken down into two parts: (1) sub-sample the majority class (i.e., randomly delete some instances) and (2) super-sample the minority class (i.e., add synthetic instances). We applied a similar method in our work, and the detailed algorithm can be illustrated in Algorithm~\ref{algorithm:smote}.
+
+\begin{algorithm}[t]
+\small
+\hspace{0.2cm}\begin{lstlisting}[xrightmargin=5.0ex,mathescape,frame=none,numbers=right]
+def SMOTE(k=2, m=50%, r=2):
+    while Majority > m do
+        delete any majority item
+    while Minority < m do
+        add something_like(any minority item)
+        
+def something_like(X0):
+    relevant = emptySet
+    k1 = 0
+    while(k1++ < 20) and size(found) < k {
+        all = k1 nearest neighbours
+        relevant += item in "all" of X0 class
+    }
+    Z = any of found
+    Y = interpolate(X0, Z)
+    return Y
+    
+def minkowski_distance(a, b, r):
+    return ($\Sigma_{i}abs(a_{i}-b_{i})^{r})^{1/r}$
+
+\end{lstlisting}
+\caption{Pseudocode of SMOTE}
+\label{algorithm:smote}  
+\end{algorithm}
+
+\begin{table}[!htbp]
+\caption {SMOTE parameters and tuning range.}
+\begin{tabular}{c|r|r|l}
+\hline
+\rowcolor[HTML]{EFEFEF}
+\textbf{Para} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Defaults\\ Used by\\ SMOTE\end{tabular}}} & \multicolumn{1}{c|}{\textbf{Tuning Range}} & \multicolumn{1}{c}{\textbf{Description}} \\ \hline
+k & 5 & {[}1,20{]} & Number of neighbors. \\ \hline
+m & 50\% & \begin{tabular}[c]{@{}r@{}}{[}50, 400{]}\end{tabular} & \begin{tabular}[c]{@{}l@{}}Number of synthetic examples\\ to create. Expressed as a \\percent of final training data.\end{tabular} \\ \hline
+r & 2 & {[}1,6{]} & \begin{tabular}[c]{@{}l@{}}Power parameter for the\\ Minkowski distance metric.\end{tabular} \\ \hline
+\end{tabular}
+\label{tbl:SMOTEpara}
+\end{table}
+
+In addition, Agrawal et al.~\cite{agrawal2018better} also designed an auto-tuning version SMOTE named SMOTUNED that used different control parameters instead of the default parameters of SMOTE algorithm. Specifically, SMOTUNED uses differential evolution algorithm to explore the parameter space. As shown in Table~\ref{tbl:SMOTEpara}, the SMOTE algorithm has three parameters: 1) the number of neighbors $k$; 2) the percentage of synthetic examples created $m$; 3) the power of Minkowski distance metric $r$. 
+
+In our work, we explore the usage of SMOTUNED in bug report prediction. We set the tuning ranges for each parameters in Table~\ref{tbl:SMOTEpara}. In order to reduce the noise by overpopulating the minority samples, we are not using $m$ as percentage but as the exact number of samples created. Note that since there are three parameters to optimize, as for differential evolution from Algorithm~\ref{algorithm:DE}, we set the number of population \textit{NP} to $30$, and use the same mutation factor \textit{F} and crossover constant \textit{CR} from Table~\ref{tbl:DEpara} and set the iteration \textit{ITER} to $10$.
+

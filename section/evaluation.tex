@@ -1,0 +1,351 @@
+\section{Evaluation and Results}
+\label{evaluation}
+
+
+% \begin{figure*}
+%     \centering
+%     \subfigure[train]{\includegraphics[width=0.24\textwidth]{figures/Chromium_train.png}}
+%     \subfigure[farsecsq]{\includegraphics[width=0.24\textwidth]{figures/Chromium_farsecsq.png}}
+%     \subfigure[farsectwo]{\includegraphics[width=0.24\textwidth]{figures/Chromium_farsectwo.png}}
+%     \subfigure[farsec]{\includegraphics[width=0.24\textwidth]{figures/Chromium_farsec.png}}
+%     \subfigure[clni]{\includegraphics[width=0.24\textwidth]{figures/Chromium_clni.png}}
+%     \subfigure[clnifarsecsq]{\includegraphics[width=0.24\textwidth]{figures/Chromium_clnifarsecsq.png}}
+%     \subfigure[clnifarsectwo]{\includegraphics[width=0.24\textwidth]{figures/Chromium_clnifarsectwo.png}}
+%     \subfigure[clnifarsec]{\includegraphics[width=0.24\textwidth]{figures/Chromium_clnifarsec.png}}
+%     \caption{Chromium datasets}
+%     \label{fig:chromium}
+% \end{figure*}
+
+% \begin{figure*}
+%     \centering
+%     \subfigure[train]{\includegraphics[width=0.24\textwidth]{figures/Wicket_train.png}} 
+%     \subfigure[farsecsq]{\includegraphics[width=0.24\textwidth]{figures/Wicket_farsecsq.png}}
+%     \subfigure[farsectwo]{\includegraphics[width=0.24\textwidth]{figures/Wicket_farsectwo.png}}
+%     \subfigure[farsec]{\includegraphics[width=0.24\textwidth]{figures/Wicket_farsec.png}}
+%     \subfigure[clni]{\includegraphics[width=0.24\textwidth]{figures/Wicket_clni.png}}
+%     \subfigure[clnifarsecsq]{\includegraphics[width=0.24\textwidth]{figures/Wicket_clnifarsecsq.png}}
+%     \subfigure[clnifarsectwo]{\includegraphics[width=0.24\textwidth]{figures/Wicket_clnifarsectwo.png}}
+%     \subfigure[clnifarsec]{\includegraphics[width=0.24\textwidth]{figures/Wicket_clnifarsec.png}}
+%     \caption{Wicket datasets}
+%     \label{fig:wickt}
+% \end{figure*}
+
+
+% \begin{figure*}
+%     \centering
+%     \subfigure[train]{\includegraphics[width=0.24\textwidth]{figures/Ambari_train.png}} 
+%     \subfigure[farsecsq]{\includegraphics[width=0.24\textwidth]{figures/Ambari_farsecsq.png}}
+%     \subfigure[farsectwo]{\includegraphics[width=0.24\textwidth]{figures/Ambari_farsectwo.png}}
+%     \subfigure[farsec]{\includegraphics[width=0.24\textwidth]{figures/Ambari_farsec.png}}
+%     \subfigure[clni]{\includegraphics[width=0.24\textwidth]{figures/Ambari_clni.png}}
+%     \subfigure[clnifarsecsq]{\includegraphics[width=0.24\textwidth]{figures/Ambari_clnifarsecsq.png}}
+%     \subfigure[clnifarsectwo]{\includegraphics[width=0.24\textwidth]{figures/Ambari_clnifarsectwo.png}}
+%     \subfigure[clnifarsec]{\includegraphics[width=0.24\textwidth]{figures/Ambari_clnifarsec.png}}
+%     \caption{Ambari datasets}
+%     \label{fig:ambari}
+% \end{figure*}
+
+
+% \begin{figure*}
+%     \centering
+%     \subfigure[train]{\includegraphics[width=0.24\textwidth]{figures/Camel_train.png}} 
+%     \subfigure[farsecsq]{\includegraphics[width=0.24\textwidth]{figures/Camel_farsecsq.png}}
+%     \subfigure[farsectwo]{\includegraphics[width=0.24\textwidth]{figures/Camel_farsectwo.png}}
+%     \subfigure[farsec]{\includegraphics[width=0.24\textwidth]{figures/Camel_farsec.png}}
+%     \subfigure[clni]{\includegraphics[width=0.24\textwidth]{figures/Camel_clni.png}}
+%     \subfigure[clnifarsecsq]{\includegraphics[width=0.24\textwidth]{figures/Camel_clnifarsecsq.png}}
+%     \subfigure[clnifarsectwo]{\includegraphics[width=0.24\textwidth]{figures/Camel_clnifarsectwo.png}}
+%     \subfigure[clnifarsec]{\includegraphics[width=0.24\textwidth]{figures/Camel_clnifarsec.png}}
+%     \caption{Camel datasets}
+%     \label{fig:camel}
+% \end{figure*}
+
+
+% \begin{figure*}
+%     \centering
+%     \subfigure[train]{\includegraphics[width=0.24\textwidth]{figures/Derby_train.png}} 
+%     \subfigure[farsecsq]{\includegraphics[width=0.24\textwidth]{figures/Derby_farsecsq.png}}
+%     \subfigure[farsectwo]{\includegraphics[width=0.24\textwidth]{figures/Derby_farsectwo.png}}
+%     \subfigure[farsec]{\includegraphics[width=0.24\textwidth]{figures/Derby_farsec.png}}
+%     \subfigure[clni]{\includegraphics[width=0.24\textwidth]{figures/Derby_clni.png}}
+%     \subfigure[clnifarsecsq]{\includegraphics[width=0.24\textwidth]{figures/Derby_clnifarsecsq.png}}
+%     \subfigure[clnifarsectwo]{\includegraphics[width=0.24\textwidth]{figures/Derby_clnifarsectwo.png}}
+%     \subfigure[clnifarsec]{\includegraphics[width=0.24\textwidth]{figures/Derby_clnifarsec.png}}
+%     \caption{Derby datasets}
+%     \label{fig:derby}
+% \end{figure*}
+
+
+
+% \begin{table}[!htbp]
+% \caption {Recall result from FARSEC, default Scikit-learn and DE tuning with Scikit-learn.}
+% \small
+% \centering
+% \resizebox{\columnwidth}{!}{%
+% \begin{tabular}{l|l|c|r|c|r|c|r}
+% \hline
+% \rowcolor[HTML]{EFEFEF} 
+% \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}} & \multicolumn{2}{c|}{\cellcolor[HTML]{EFEFEF}\begin{tabular}[c]{@{}c@{}}Weka\\ (FARSEC)\end{tabular}} & \multicolumn{2}{c|}{\cellcolor[HTML]{EFEFEF}Scikit-learn} & \multicolumn{2}{c}{\cellcolor[HTML]{EFEFEF}\begin{tabular}[c]{@{}c@{}}Scikit-learn\\ DE Tuning\end{tabular}} \\ \cline{3-8} 
+% \rowcolor[HTML]{EFEFEF} 
+% \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}Project}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}Filter}} & Learner & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}pd} & Learner & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}pd} & Learner & \multicolumn{1}{c}{\cellcolor[HTML]{EFEFEF}pd} \\ \hline
+%  & train & LR & 15.7 & MP & 15.7 & NB & \textbf{49.6} \\ 
+%  & farsecsq & RF & 14.8 & RF & 37.4 & NB & \textbf{72.2} \\  
+%  & farsectwo & LR & 15.7 & MP & 15.7 & NB & \textbf{33.0} \\  
+%  & farsec & LR & 15.7 & MP & 15.7 & NB & \textbf{45.2} \\ 
+%  & clni & LR & 15.7 & MP & 15.7 & NB & \textbf{34.8} \\
+%  & clnifarsecsq & MP & 49.6 & MP & 57.4 & MP & \textbf{66.1} \\ 
+%  & clnifarsectwo & LR & 15.7 & MP & 15.7 & NB & \textbf{50.4} \\ 
+% \multirow{-8}{*}{Chromium} & clnifarsec & LR & 15.7 & MP & 15.7 & NB & \textbf{45.2} \\ \hline
+%  & train & NB & 16.7 & NB & 0 & NB & 0 \\ 
+%  & farsecsq & LR & 66.7 & NB & 83.3 & NB & 83.3 \\ 
+%  & farsectwo & LR & 66.7 & NB & 66.7 & NB & 50 \\ 
+%  & farsec & LR & 33.3 & NB & 66.7 & NB & 66.7 \\ 
+%  & clni & NB & 0 & NB & 0 & MP & \textbf{16.7} \\ 
+%  & clnifarsecsq & LR & 33.3 & NB & 83.3 & NB & 50 \\
+%  & clnifarsectwo & LR & 33.3 & NB & 66.7 & NB & 50 \\ 
+% \multirow{-8}{*}{Wicket} & clnifarsec & LR & 50 & MP & 66.7 & NB & 66.7 \\ \hline
+%  & train & MP & 14.3 & LR & 28.6 & LR & 28.6 \\ 
+%  & farsecsq & RF & 42.9 & RF & 42.9 & RF & \textbf{57.1} \\
+%  & farsectwo & RF & 57.1 & RF & 42.8 & RF & \textbf{57.1} \\
+%  & farsec & MP & 14.3 & MP & 28.6 & RF & \textbf{57.1} \\  
+%  & clni & MP & 14.3 & LR & 28.6 & LR & 28.6 \\ 
+%  & clnifarsecsq & RF & 57.1 & RF & 57.1 & RF & 57.1 \\ 
+%  & clnifarsectwo & RF & 28.6 & RF & 42.9 & RF & \textbf{57.1} \\ 
+% \multirow{-8}{*}{Ambari} & clnifarsec & RF & 14.3 & LR & 28.5 & RF & \textbf{57.1} \\ \hline
+%  & train & LR & 11.1 & NB & 16.7 & MP & 16.7 \\ 
+%  & farsecsq & RF & 16.7 & RF & 38.9 & RF & \textbf{44.4} \\ 
+%  & farsectwo & LR & 50 & NB & 61.1 & RF & 44.4 \\ 
+%  & farsec & LR & 16.7 & NB & 22.2 & NB & 22.2 \\  
+%  & clni & NB & 16.7 & NB & 16.7 & NB & 16.7 \\  
+%  & clnifarsecsq & MP & 16.7 & RF & 27.8 & RF & \textbf{44.4} \\  
+%  & clnifarsectwo & MP & 11.1 & NB & 61.1 & NB & 61.1 \\ 
+% \multirow{-8}{*}{Camel} & clnifarsec & LR & 16.7 & NB & 22.2 & NB & 22.2 \\ \hline
+%  & train & NB & 38.1 & NB & 45.2 & NB & 45.2 \\ 
+%  & farsecsq & KNN & 54.8 & KNN & 35.7 & KNN & \textbf{59.5} \\ 
+%  & farsectwo & RF & 47.6 & RF & 42.9 & LR & \textbf{59.5} \\ 
+%  & farsec & NB & 38.1 & NB & 47.6 & NB & 47.6 \\ 
+%  & clni & RF & 23.8 & NB & 45.2 & NB & 45.2 \\ 
+%  & clnifarsecsq & KNN & 54.8 & RF & 71.4 & KNN & 59.5 \\ 
+%  & clnifarsectwo & RF & 35.7 & RF & 35.7 & LR & \textbf{59.5} \\ 
+% \multirow{-8}{*}{Derby} & clnifarsec & NB & 38.1 & NB & 47.6 & NB & 47.6 \\ \hline
+% \end{tabular}
+% }
+% \label{tbl:tuningRecall}
+% \end{table}
+
+
+\begin{table*}[!htbp]
+\caption {Recall and false positive results from FARSEC, default Scikit-learn and DE tuning with Scikit-learn., SMOTE with Scikit-learn and SMOTUNED with Scikit-learn.}
+% \small
+\centering
+% \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l|l|c|r|r|c|r|r|c|r|r|c|r|r}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}} & \multicolumn{3}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{\begin{tabular}[c]{@{}c@{}}Weka\\ (FARSEC)\end{tabular}}} & \multicolumn{3}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{\begin{tabular}[c]{@{}c@{}}Scikit-learn\\ DE Tuning\end{tabular}}} & \multicolumn{3}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{\begin{tabular}[c]{@{}c@{}}Scikit-learn\\ SMOTE\end{tabular}}} & \multicolumn{3}{c}{\cellcolor[HTML]{EFEFEF}\textbf{\begin{tabular}[c]{@{}c@{}}Scikit-learn\\ SMOTUNED\end{tabular}}} \\ \cline{3-14} 
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Project}}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Filter}}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} \\ \hline
+ & train & LR & 15.7 & 0.2 & NB & 46.9 & 6.8 & NB & 68.7 & 24.1 & \cellcolor[HTML]{EFEFEF}MP & \cellcolor[HTML]{EFEFEF}73.9 & 17.8 \\  
+ & farsecsq & RF & 14.8 & 0.3 & LR & 64.3 & 10.3 & NB & 80.0 & 31.5 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}84.3 & 25.1 \\  
+ & farsectwo & LR & 15.7 & 0.2 & NB & 40.9 & 6.5 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}78.3 & 27.6 & RF & 77.4 & 23.1 \\  
+ & farsec & LR & 15.7 & 0.2 & NB & 46.1 & 6.9 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}80.8 & 36.1 & MP & 72.2 & 14.9 \\  
+ & clni & LR & 15.7 & 0.2 & NB & 30.4 & 4.1 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}74.8 & 24.8 & MP & 72.2 & 13.6 \\  
+ & clnifarsecsq & MP & 49.6 & 3.8 & MP & 72.2 & 14.2 & NB & 82.6 & 30.4 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}86.1 & \cellcolor[HTML]{EFEFEF}25.6 \\  
+ & clnifarsectwo & LR & 15.7 & 0.2 & NB & 50.4 & 7.0 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}79.1 & \cellcolor[HTML]{EFEFEF}29.9 & MP & 74.8 & 12.8 \\  
+\multirow{-8}{*}{Chromium} & clnifarsec & LR & 15.7 & 0.2 & NB & 47.8 & 10.4 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}78.3 & \cellcolor[HTML]{EFEFEF}29 & MP & 74.7 & 17.1 \\ \hline
+ & train & NB & 16.7 & 7.1 & NB & 0.0 & 5.1 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 32 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 12.1 \\  
+ & farsecsq & LR & 66.7 & 38.3 & NB & 50.0 & 44.5 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}83.3 & 71.3 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}83.3 & 66.8 \\  
+ & farsectwo & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}66.7 & 36.6 & NB & 50.0 & 42.3 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 68.2 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 62.9 \\  
+ & farsec & LR & 33.3 & 8.1 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 23.1 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 43.9 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 26.1 \\  
+ & clni & NB & 0.0 & 5.5 & MP & 16.7 & 2.4 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}50.0 & 21.1 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}50.0 & 12.5 \\  
+ & clnifarsecsq & LR & 33.3 & 25.5 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}83.3 & 66.8 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}83.3 & 66.8 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}83.3 & 66.8 \\  
+ & clnifarsectwo & LR & 33.3 & 27.7 & NB & 50.0 & 39.9 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 61.3 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 61.3 \\  
+\multirow{-8}{*}{Wicket} & clnifarsec & LR & 50.0 & 10.5 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 23.1 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 38.9 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & 22.9 \\ \hline
+ & train & MP & 14.3 & 1.6 & LR & 28.6 & 0.8 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}57.1 & 20.1 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 10.8 \\  
+ & farsecsq & RF & 42.9 & 14.4 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 2.8 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}57.1 & 30.4 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 17.2 \\  
+ & farsectwo & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 3.0 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 2.8 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 22.1 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 17.8 \\  
+ & farsec & MP & 14.3 & 4.9 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 2.0 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}57.1 & 19.9 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}57.1 & 7.1 \\  
+ & clni & MP & 14.3 & 2.6 & LR & 28.6 & 0.8 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}57.1 & 12.4 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}57.1 & 8.9 \\  
+ & clnifarsecsq & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 7.7 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 2.4 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 13.4 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 7.1 \\  
+ & clnifarsectwo & RF & 28.6 & 4.5 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 2.8 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 13.0 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 5.1 \\  
+\multirow{-8}{*}{Ambari} & clnifarsec & RF & 14.3 & 0.0 & RF & 57.1 & 2.4 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & 7.9 & RF & 57.1 & 3.9 \\ \hline
+ & train & LR & 11.1 & 3.5 & MP & 16.7 & 1.5 & NB & 33.3 & 27.4 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}44.4 & 35.9 \\  
+ & farsecsq & RF & 16.7 & 11.4 & RF & 44.4 & 24.7 & RF & 44.4 & 20.5 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}55.6 & 23.4 \\  
+ & farsectwo & LR & 50.0 & 41.8 & RF & 44.4 & 17.6 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}61.1 & 71.0 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}61.1 & 53.1 \\  
+ & farsec & LR & 16.7 & 6.9 & NB & 22.2 & 12.4 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}33.3 & 39.4 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}33.3 & 28.0 \\  
+ & clni & NB & 16.7 & 12.3 & NB & 16.7 & 7.9 & NB & 33.3 & 33.6 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}38.9 & 35.3 \\  
+ & clnifarsecsq & MP & 16.7 & 13.9 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}38.9 & 14.9 & RF & 27.8 & 12.4 & RF & 33.3 & 15.6 \\  
+ & clnifarsectwo & MP & 11.1 & 7.7 & NB & 61.1 & 50.0 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}72.2 & 64.9 & NB & 61.1 & 51.9 \\  
+\multirow{-8}{*}{Camel} & clnifarsec & LR & 16.7 & 5.0 & NB & 22.2 & 11.6 & LR & 33.3 & 24.9 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}38.9 & 34.4 \\ \hline
+ & train & NB & 38.1 & 6.8 & NB & 47.6 & 39.3 & NB & 54.7 & 22.2 & \cellcolor[HTML]{EFEFEF}MP & \cellcolor[HTML]{EFEFEF}59.5 & 20.7 \\  
+ & farsecsq & KNN & 54.8 & 29.9 & KNN & 59.5 & 40.6 & RF & 54.7 & 51.7 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}66.7 & 51.5 \\  
+ & farsectwo & RF & 47.6 & 12.4 & LR & 59.5 & 24.2 & RF & 47.6 & 27.9 & \cellcolor[HTML]{EFEFEF}MP & \cellcolor[HTML]{EFEFEF}66.7 & 33.6 \\  
+ & farsec & NB & 38.1 & 6.3 & NB & 47.6 & 4.1 & NB & 57.1 & 21.0 & \cellcolor[HTML]{EFEFEF}MP & \cellcolor[HTML]{EFEFEF}59.5 & 19.0 \\  
+ & clni & RF & 23.8 & 0.4 & NB & 45.2 & 3.5 & NB & 57.7 & 16.8 & \cellcolor[HTML]{EFEFEF}MP & \cellcolor[HTML]{EFEFEF}61.9 & 24.5 \\  
+ & clnifarsecsq & KNN & 54.8 & 29.9 & KNN & 59.5 & 42.4 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}76.2 & 74.7 & RF & 69.0 & 65.1 \\  
+ & clnifarsectwo & RF & 35.7 & 9.2 & LR & 59.5 & 24.2 & RF & 54.8 & 36.5 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}61.9 & 30.3 \\  
+\multirow{-8}{*}{Derby} & clnifarsec & NB & 38.1 & 6.8 & NB & 47.6 & 3.9 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}61.9 & 28.8 & NB & 57.1 & 10.9 \\ \hline
+\end{tabular}
+% \end{adjustbox}
+\label{tbl:tuningRecall}
+\end{table*}
+
+\begin{figure*}[!t]
+\centering
+\scriptsize
+\begin{tabular}{cc}
+  
+  % BEGIN SECOND IMG
+  \begin{tikzpicture}
+	\begin{axis}[
+		height=4cm,
+		width=8cm,
+		ymax=70,
+		%grid=major,
+		xlabel={All values (sorted)},
+        ylabel={Change in $pd$}
+	]
+	\addplot table [x=a, y=DE, col sep=comma, mark=none] {detla_pd.csv};
+	%\addlegendentry{DE}
+    \addplot table [x=a, y=SMOTE, col sep=comma,mark=none] {detla_pd.csv};
+	%\addlegendentry{SMOTE}
+	\addplot table [x=a, y=SMOTETUNE, col sep=comma,mark=none] {detla_pd.csv};
+	%\addlegendentry{SMOTUNED}
+	\end{axis}
+    \end{tikzpicture} 
+  % END SECOND IMG
+  & 
+  % BEGIN FIRST IMG
+ \begin{tikzpicture}
+	\begin{axis}[
+		height=4cm,
+		width=8cm,
+		ymax=70,
+		%grid=major,
+		xlabel={All values (sorted)},
+        ylabel={Change in $pf$},   
+        legend style={at={(0.25,0.95)},anchor=north} 
+	]
+	\addplot table [x=a, y=DE, col sep=comma, mark=none] {detla_pf.csv};
+	\addlegendentry{DE}
+    \addplot table [x=a, y=SMOTE, col sep=comma,mark=none] {detla_pf.csv};
+	\addlegendentry{SMOTE}
+	\addplot table [x=a, y=SMOTETUNE, col sep=comma,mark=none] {detla_pf.csv};
+	\addlegendentry{SMOTETUNE}
+%  	\legend{};
+	\end{axis}
+    \end{tikzpicture}
+  % END FIRST IMG
+  
+  \\~\\
+  % BEGIN THIRD IMG
+  \begin{tikzpicture}
+	\begin{axis}[
+		height=4cm,
+		width=8cm,
+		ymax=90,
+		%grid=major,
+		xlabel={All values (sorted)},
+        ylabel={$pd$},
+        legend columns=-1
+	]
+	\addplot table [x=id, y=weka_pd, col sep=comma, mark=none] {sec2.csv};
+	\addlegendentry{WEKA}
+    \addplot table [x=id, y=st_pd, col sep=comma,mark=none] {sec2.csv};
+	\addlegendentry{SMOTUNED}
+	\legend{};
+	\end{axis}
+    \end{tikzpicture} 
+  % END THIRD IMG
+  &
+  % BEGIN FORTH IMG
+  \begin{tikzpicture}
+	\begin{axis}[
+		height=4cm,
+		width=8cm,
+		ymax=90,
+		%grid=major,
+		xlabel={All values (sorted)},
+        ylabel={$pf$},
+        legend columns=-1,
+        legend style={at={(0.35,0.95)},anchor=north}
+	]
+	\addplot table [x=id, y=weka_pf, col sep=comma, mark=none, name path=A] {sec2.csv};
+	\addlegendentry{WEKA}
+    \addplot table [x=id, y=st_pf, col sep=comma,mark=none, name path=B] {sec2.csv};
+	\addlegendentry{SMOTUNED}
+	\end{axis}
+    \end{tikzpicture} 
+  % END FORTH IMG
+\end{tabular}
+\caption{A comparison of changes in pd and pf values among DE, SMOTE and SMOTUNED, and a comparison of pd and pf values between WEKA and SMOTUNED}
+\end{figure*}
+
+We now answer the following research questions:
+
+\begin{tcolorbox}[enhanced,width=3.4in,size=fbox,
+    fontupper=\normalsize\bfseries,drop shadow southwest,sharp corners]
+(RQ1.) Can hyperparameter optimization technique improves prediction performance than using the ``off-the-shelf'' default configurations in learners for all datasets?
+\end{tcolorbox}
+
+As we discussed above, FARSEC uses default hyperparameter setting of different learners in Weka when performing prediction. Since we implement default prediction learners and apply hyperparameter tuning in scikit-learn, we firstly compare the prediction results from two different implementations over the same datasets. 
+
+In our experiment, we describe a filter to a project as a dataset. We use 10-fold cross validation for each learner during the training phase, and we compute the median result of g-measure from 10 repetitive experiments. Cross validation provides a good projection of expected error of a model built on the full dataset. The learner with the highest computed g-measure is selected as candidate learner. We then rebuild the model with the candidate learner with the whole training dataset, and experiment on the separate testing dataset. 
+
+These figures present performance results from candidate learners on all 40 datasets. However, we have no idea what is the selection methodology from FARSEC when its performance results are reported for each dataset. From these results we can see, scikit-learn achieves a similar performance (e.g., recall) to Weka on  most of 40 datasets.
+
+We further investigate whether hyperparameter optimization improves prediction performance. In our experiment, as we discussed before, we only target on achieving a high g-measure performance measure. In general, a higher g-measure can be achieved by three ways:
+
+\begin{itemize}
+    \item A higher recall and a lower false positive rate
+    \item A lower or the same recall and a lower false positive rate
+    \item A higher recall and a higher or the same false positive rate
+\end{itemize}
+
+Therefore, a higher g-measure might be a trade-off between recall and false positive rate. We collect the performance results of the rest measures when getting the target measure result. Especially, for imbalanced datasets, we care more about the recall measure, for which we are pursuing high false positive with low false negative. Table~\ref{tbl:tuningRecall} takes a close look at the hyperparameter optimization result of the recall. We highlight the highest recall value with shadow among all approaches. Hyperparameter optimization improves the recall on 18 datasets and only only 7 of which are among the best results. This would indicate that the benefit of using hyperparameter optimization is limited.
+
+To sum up, for this research question, we can conclude that hyperparameter tuning  improves prediction performance than using the ``off-the-shelf'' default configurations in learners. However, it does not apply to all the datasets.
+
+
+
+
+\begin{tcolorbox}[enhanced,width=3.4in,size=fbox,
+    fontupper=\normalsize\bfseries,drop shadow southwest,sharp corners]
+(RQ2.) Can oversampling techniques like SMOTE and tuned SMOTE address the imbalanced class problem in dataset?
+\end{tcolorbox}
+
+Table~\ref{tbl:tuningRecall} also show the prediction results of SMOTE with default parameters and tuned parameters. From these results, especially from Table~\ref{tbl:tuningRecall} we can observe that, the SMOTE-based oversampling approaches bring great improvements on the recall metrics, most of which are among the highest values of all compared approaches. The tuned version of SMOTE achieve the same results with regard to recall on the Wicket and Ambari datasets and improves better on the Camel and Derby datasets. Chromium dataset is a litter different case, in which SMOTE achieves higher recall on 5 out of 8 datasets than SMOTUNED. However, as we discuss before, SMOTUNED aims to achieves a higher g-measure, and in this case, a lower false positive rate is achieved at the cost of a lower recall results.
+
+
+
+\begin{table*}[!htbp]
+\centering
+\caption{Average runtime (in minute) of tuning different learners' hyperparameters and SMOTE's hyperparameters.}
+\begin{tabular}{c|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\cellcolor[HTML]{EFEFEF} & \multicolumn{5}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{DE3}} & \multicolumn{5}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{DE10}} & \multicolumn{5}{c}{\cellcolor[HTML]{EFEFEF}\textbf{SMOTUNED}} \\ \cline{2-16} 
+\rowcolor[HTML]{EFEFEF} 
+\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Project}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{NB}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{RF}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{MP}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{LR}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{KNN}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{NB}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{RF}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{MP}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{LR}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{KNN}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{NB}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{RF}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{MP}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{LR}} & \multicolumn{1}{c}{\cellcolor[HTML]{EFEFEF}\textbf{KNN}} \\ \hline
+Chromium & \textless{}1 & 14 & 288 & \textless{}1 & 151 & \textless{}1 & 39 & 435 & 4 & 398 & \textless{}1 & \textless{}1 & 6 & \textless{}1 & 11 \\
+Wicket & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 & \textless{}1 & 2 & 6 & \textless{}1 & \textless{}1 & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 \\ 
+Ambari & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 & \textless{}1 & 2 & 6 & \textless{}1 & \textless{}1 & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 \\ 
+Camel & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 & \textless{}1 & 2 & 6 & \textless{}1 & \textless{}1 & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 \\
+Derby & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 & \textless{}1 & 2 & 6 & \textless{}1 & \textless{}1 & \textless{}1 & \textless{}1 & 4 & \textless{}1 & \textless{}1 \\ \hline
+\end{tabular}
+\label{tbl:tuningtime}
+\end{table*}
+
+We also could notice that the best learner with SMOTE and SMOTUNED for each dataset alters when compared with FARSEC and default implementation with Scikit-learn. This might indicate that ``better data'' could be better than ``better data miners'', which means data preprocessing could be more efficient than switching to another data miners on some datasets.
+
+For this research question, we answer ``yes'' since the performance increment seen above is much better than default learners and even the tuned learners.
+
+\begin{tcolorbox}[enhanced,width=3.4in,size=fbox,
+    fontupper=\normalsize\bfseries,drop shadow southwest,sharp corners]
+(RQ3.) Is the cost of running hyperparameter optimization, tuned SMOTE worth the performance improvement in terms of runtimes?
+\end{tcolorbox}
+
+As we discussed in Section~\ref{design}, the search space of hyperparameters, i.e., the number of population, is set to 10 times of the number of hyperparameters. We use two different iterations, i.e., 3 and 10, in the hyperparameter tuning process and iteration number of 10 in SMOTUNED. Table~\ref{tbl:tuningtime} shows the average runtime of hyperparameter optimization and SMOTUNED. Looking over this table, there are two factors that influence the runtime: the size of dataset and the type of learner. Small datasets such as Wicket, Ambari, Camel and Derby have about 500 entries of data. In general, the tuning process is not slow, which takes less than 10 minutes for all learners. However, for large dataset like Chromium which has about 20,000 entries of data, except for multilayer perceptron and KNN, the tuning time for the rest learners in all cases are also acceptable.
+
+Hence, we answer this RQ as ``yes'', the cost of tuning data mining learners and SMOTE is not high and worth the performance improvement.
+

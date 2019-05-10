@@ -1,0 +1,10 @@
+\section{Threats to Validity}
+\label{threats}
+
+As to any empirical study, biases can affect the final results. Therefore, conclusions drawn from this work must be considered with threats to validity in mind. In this section, we discuss the validity of our work.
+
+\begin{enumerate}
+    % \item \textbf{Sampling Validity.}
+    \item \textbf{Learner Validity.} Lots of different machine learning algorithms have been developed to solve different classification problem tasks. An important note from David Wolpert is the ``No Free Lunch Theorems''. There is no one learner working for all problems. One reason for this is that each classification has its inherent biases. In this work, we do not explore the performance for different learners. To compare the work with FARSEC, we use the same learners as Peters did in their work.
+    \item \textbf{Evaluation Validity.} On one hand, during our evaluation, we repeat our work 10 times and report the average performance results for different learners. On the other hand, we only set two versions of generations (i.e., 3 and 10) for learners and one version of generation (i.e., 10) for SMOTE in differential evolution algorithm. Larger number of generations could be further explored, but with more CPU efforts and time.
+\end{enumerate}

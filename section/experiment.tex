@@ -1,0 +1,1516 @@
+\section{Experiment}
+\label{experiment}
+
+\subsection{Bug Report Datasets}
+
+Datasets used in our experiment are the same as Peters used in FARSEC, in which historical bugs reports from five projects are chosen: four from Ohira et al. (i.e., Wicket\footnote{https://wicket.apache.org/}, Ambari\footnote{http://ambari.apache.org/}, Camel\footnote{http://camel.apache.org/}, Derby\footnote{http://db.apache.org/derby/})~\cite{ohira2015dataset}, and a subset of bug reports from the Chromium project\footnote{https://www.chromium.org/Home}. FARSEC preprocessed the raw datasets with several steps, i.e., tokenize text, remove stop words and unwanted terms, calculate tf-idf (term frequency-inverse document frequency) values and construct term-document frequency matrix.
+
+\begin{table}[!htbp]
+\caption {Different Filters used in FARSEC.}
+\centering
+\begin{tabular}{l|l}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{Filter}} & \multicolumn{1}{c}{\cellcolor[HTML]{EFEFEF}\textbf{Description}} \\ \hline
+farsecsq & \begin{tabular}[c]{@{}l@{}}Apply the Jalali et al.~\cite{jalali2008optimizing} support function\\ to the frequency of words found in SBRs\end{tabular} \\ \hline
+farsectwo & \begin{tabular}[c]{@{}l@{}}Apply the Graham version~\cite{graham2004hackers} of multiplying \\ the frequency by two.\end{tabular} \\ \hline
+farsec & Apply no support function. \\ \hline
+clni & Apply CLNI filter to non-filtered data. \\ \hline
+clnifarsec & Apply CLNI filter to farsec filtered data. \\ \hline
+clnifarsecsq & Apply CLNI filter to farsecsq filtered data. \\ \hline
+clnifarsectwo & Apply CLNI filter to farsectwo filtered data. \\ \hline
+\end{tabular}
+\label{tbl:farsecFilter}
+\end{table}
+
+FARSEC also applied multiple filters to remove NSBRs with security related keywords. Table~\ref{tbl:farsecFilter} lists all the filters used in FARSEC. FARSEC filtering method is mainly based on Graham's Bayesian filter~\cite{graham2004hackers}. For example, FARSEC used support functions to the frequency of the words found in SBRs to reduce mislabelled SBRs. In addition, FARSEC applied an noise detection algorithm called CLNI (Closet List Noise Identification)~\cite{kim2011dealing} method to deal with noise in prediction. A threshold score (e.g., $0.75$) is set to remove any NSBRs above the score.
+
+All the training datasets are separated from the testing dataset in FARSEC. Each training dataset applied one specific filter, while a training dataset named ``train'' does not apply any filter. Table~\ref{tbl:farsecDataset} shows the charactersitics of the FARSEC datasets. As we can see from the table, the major challenge we face with these datasets is the imbalanced class problem, i.e., the number of SBRs occupies a small portion of the datasets.
+
+\begin{table}[!htbp]
+\caption {Imbalanced characteristics of bug report datasets from FARSEC.}
+\small
+\centering
+\begin{tabular}{c|l|c|r|r}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Project} & \multicolumn{1}{c|}{\textbf{Filter}} & \textbf{\#SBR} & \multicolumn{1}{c|}{\textbf{\#BR}} & \multicolumn{1}{c}{\textbf{SBRs(\%)}} \\ \hline
+\multirow{8}{*}{Chromium} & train & \multirow{8}{*}{77} & 20970 & 0.4 \\  
+ & farsecsq &  & 14219 & 0.5 \\ 
+ & farsectwo &  & 20968 & 0.4 \\  
+ & farsec &  & 20969 & 0.4 \\  
+ & clni &  & 20154 & 0.4 \\  
+ & clnifarsecsq &  & 13705 & 0.6 \\  
+ & clnifarsectwo &  & 20152 & 0.4 \\  
+ & clnifarsec &  & 20153 & 0.4 \\ \hline
+\multirow{8}{*}{Wicket} & train & \multirow{8}{*}{4} & 500 & 0.8 \\
+ & farsecsq &  & 136 & 2.9 \\  
+ & farsectwo &  & 143 & 2.8 \\  
+ & farsec &  & 302 & 1.3 \\  
+ & clni &  & 392 & 1.0 \\  
+ & clnifarsecsq &  & 46 & 8.7 \\  
+ & clnifarsectwo &  & 49 & 8.2 \\  
+ & clnifarsec &  & 196 & 2.0 \\ \hline
+\multirow{8}{*}{Ambari} & train & \multirow{8}{*}{22} & 500 & 4.4 \\  
+ & farsecsq &  & 149 & 14.8 \\  
+ & farsectwo &  & 260 & 8.5 \\  
+ & farsec &  & 462 & 4.8 \\  
+ & clni &  & 409 & 5.4 \\  
+ & clnifarsecsq &  & 76 & 28.9 \\ 
+ & clnifarsectwo &  & 181 & 12.2 \\  
+ & clnifarsec &  & 376 & 5.9 \\ \hline
+\multirow{8}{*}{Camel} & train & \multirow{8}{*}{14} & 500 & 2.8 \\  
+ & farsecsq &  & 116 & 12.1 \\ 
+ & farsectwo &  & 203 & 6.9 \\  
+ & farsec &  & 470 & 3.0 \\  
+ & clni &  & 440 & 3.2 \\  
+ & clnifarsecsq &  & 71 & 19.7 \\  
+ & clnifarsectwo &  & 151 & 9.3 \\  
+ & clnifarsec &  & 410 & 3.4 \\ \hline
+\multirow{8}{*}{Derby} & train & \multirow{8}{*}{46} & 500 & 9.2 \\  
+ & farsecsq &  & 57 & 80.7 \\  
+ & farsectwo &  & 185 & 24.9 \\  
+ & farsec &  & 489 & 9.4 \\  
+ & clni &  & 446 & 10.3 \\  
+ & clnifarsecsq &  & 48 & 95.8 \\  
+ & clnifarsectwo &  & 168 & 27.4 \\  
+ & clnifarsec &  & 435 & 10.6 \\ \hline
+\end{tabular}
+\label{tbl:farsecDataset}
+\end{table}
+
+
+\subsection{Evaluation Metrics}
+
+For the performance of the prediction models, we use TP, TN, FP and FN to denote True Positive, True Negative, False Positive and False Negative respectively. These metrics make up the confusion matrix, which is a breakdown of predictions into a table showing correct predictions and incorrect predictions. We also report the probability of detection \textit{pd} (i.e., recall), probability of false alarm \textit{pf} (i.e., false positive rate), precision, f-measure (i.e., f1-score) and g-measure. 
+
+% Different metrics are chosen according to different cases. 
+
+% \noindent
+% \renewcommand\arraystretch{1.5}
+% \setlength\tabcolsep{0pt}
+% \begin{table}[t]
+% \caption {Confusion matrix.}
+% \centering
+% \begin{tabular}{c >{\bfseries}r @{\hspace{0.7em}}c @{\hspace{0.4em}}c @{\hspace{0.7em}}l}
+%   \multirow{10}{*}{\rotatebox{90}{\parbox{1.1cm}{\bfseries\centering actual\\ value}}} & 
+%     & \multicolumn{2}{c}{\bfseries Prediction outcome} & \\
+%   & & \bfseries $1$ & \bfseries $0$ & \bfseries Total \\
+%   & $1$ & \MyBox{True}{Positive} & \MyBox{False}{Negative} & TP+FN \\[2.4em]
+%   & $0$ & \MyBox{False}{Positive} & \MyBox{True}{Negative} & FP+FN \\ \\
+%   & Total & TP+FP & FN+TN &
+% \end{tabular}
+% \label{tbl:cmatrix}
+% \end{table}
+
+
+\begin{eqnarray}
+    \mathit{pd} &=& \frac{\mathit{TP}}{\mathit{TP}+\mathit{FN}} \\
+    \mathit{pf} &=& \frac{\mathit{FP}}{\mathit{FP}+\mathit{TN}} \\
+    \mathit{prec} &=& \frac{\mathit{TP}}{\mathit{TP}+\mathit{FP}} \\
+    \mathit{f\textnormal{-}measure} &=& \frac{2 \times \mathit{pd} \times \mathit{prec}}{\mathit{pd}+\mathit{prec}} \\
+    \mathit{g\textnormal{-}measure} &=& \frac{2 \times \mathit{pd} \times (1-\mathit{pf})}{\mathit{pd} + (1-\mathit{pf})}
+\end{eqnarray}
+
+Among these evaluation metrics, recall is a measure of classifier's completeness while precision is a measure of classifier's exactness. F-measure, as a harmonic average of precision and recall, seeks for  balanced between them. A good predictor is expected to achieve a high recall along with a low false positive rate precision. Base on this insight, we choose to achieve a high G-measure as our target in hyperparameter tuning, especially when there is an uneven class distribution.
+
+% Note that we we do not choose recall as an evaluation metric, because in some cases a high recall also comes with a high false-positive rate.
+
+% Note that F-measure is usually used to seek . Therefore, F-measure might be a good measure when there is an uneven class distribution (large number of Actual Negatives). \textcolor{red}{that's why we choose to tune F-score}
+
+
+% \begin{table}
+% % \large
+% \caption {A list of evaluation metrics.}
+% \label{table:metrics} 
+% \begin{tabular}{|c|c|l|l|}
+% \hline
+% \multicolumn{2}{|c|}{\multirow{2}{*}{}} & \multicolumn{2}{c|}{\textbf{Actual}} \\ \cline{3-4} 
+% \multicolumn{2}{|c|}{} & yes & no \\ \hline
+% \multirow{2}{*}{\textbf{Predicted}} & yes & TP & FP \\ \cline{2-4} 
+%  & no & FN & TN \\ \hline
+% \multirow{2}{*}{\textbf{Recall}} & \multicolumn{3}{c|}{\multirow{2}{*}{$\frac{TP}{TP+FN}$}} \\
+%  & \multicolumn{3}{c|}{} \\ 
+% \multirow{2}{*}{\textbf{Precision}} & \multicolumn{3}{c|}{\multirow{2}{*}{$\frac{TP}{TP+FP}$}} \\
+%  & \multicolumn{3}{c|}{} \\ 
+% \multirow{2}{*}{\textbf{F-measure}} & \multicolumn{3}{c|}{\multirow{2}{*}{$\frac{2*Recall*Prec}{Recall+Prec}$}} \\
+%  & \multicolumn{3}{c|}{} \\ \hline
+% \end{tabular}
+% \end{table}
+
+
+% \begin{table}[!htb]
+% \caption {Evaluation metrics.}
+% \label{table:metrics} 
+% \begin{tabular}{|c|c|l|l|}
+% \hline
+% \multicolumn{2}{|c|}{\multirow{2}{*}{}} & \multicolumn{2}{c|}{\textbf{Actual}} \\ \cline{3-4} 
+% \multicolumn{2}{|c|}{} & yes & no \\ \hline
+% \multirow{2}{*}{\textbf{Predicted}} & yes & TP & FP \\ \cline{2-4} 
+%  & no & FN & TN \\ \hline
+% \multirow{2}{*}{\textbf{Recall}} & \multicolumn{3}{c|}{\multirow{2}{*}{$\frac{TP}{TP+FN}$}} \\
+%  & \multicolumn{3}{c|}{} \\ \hline
+% % \multirow{2}{*}{\textbf{Precision}} & \multicolumn{3}{c|}{\multirow{2}{*}{$\frac{TP}{TP+FP}$}} \\
+% %  & \multicolumn{3}{c|}{} \\ 
+% % \multirow{2}{*}{\textbf{F-measure}} & \multicolumn{3}{c|}{\multirow{2}{*}{$\frac{2*Recall*Prec}{Recall+Prec}$}} \\
+% %  & \multicolumn{3}{c|}{} \\ \hline
+% \end{tabular}
+% \end{table}
+
+\subsection{Machine Learning Algorithms}
+Five machine learning learners are selected as FARSEC, i.e., Random Forest, Naive Bayes, Logistic Regression, Multilayer Perceptron and K Nearest Neighbour. They are widely used in the classification problems~\cite{lessmann2008benchmarking}. We now give a brief description of each algorithm.
+
+\textbf{Random Forest.} Random forests~\cite{liaw2002classification} have gained huge popularity in applications of machine learning during the last decades due to their good classification performance, scalability, and ease of use. Intuitively, a random forest can be considered as an ensemble of decision trees. The idea behind ensemble learning is to combine weak learners to build a more robust model, a strong learner, that has a better generalization error and is less susceptible to over-fitting. There are several advantages of random forest, e.g. it can be used for both classification and regression problems, and it is easy to measure the relative importance of each feature on the prediction.
+
+\textbf{Naive Bayes.} Naive Bayes~\cite{rish2001empirical} is a very popular classifier for document classification, e.g., e-mail spam filtering. Naive Bayes is a subset of Bayesian decision theory, since the formulation makes some naive assumptions, this is what it meant by naive in the Naive Bayes classifier. Naive Bayes classifiers are computationally efficient and tend to perform well on relatively small datasets and is able to handle multiple classes compared to other algorithms.
+
+\textbf{Logistic Regression.} Logistic regression~\cite{hosmer2013applied} is a classification model that works well on linearly separable classes, and it is one of the most widely used algorithm for classification in industry (e.g., weather forecasting). In general, logistic regression could be viewed as a probability estimation. A threshold can be set to predict the class a data belongs. Based upon the threshold, the obtained estimated probability is classified into classes. The decision boundary of logistic regression can be linear or non-linear. 
+
+\textbf{Multilayer Perceptron.} Multilayer perceptron~\cite{gardner1998artificial} is an artificial neural network which is composed by multiple perceptrons. A perceptron is a single neuron model that is a precursor to larger neural networks. An input layer receives the signal and an output layer makes the prediction about the input. Between the input layer and the output layer, an arbitrary number of hidden layers act as the computational engine. In a sense, multilayer perceptron learns a mapping of the input training data, and best relate it to the predicted output. 
+
+\textbf{K Nearest Neighbor.} K nearest neighbor classifier~\cite{keller1985fuzzy} is one of the simplest predictive model. When classifying a new element, nearest neighbor classifier checks in the training data for K objects close to the element (i.e., K nearest neighbors). The classifier returns the class by majority voting among its neighbors. K nearest neighbor is a typical ``lazy learner'' since it does not learn a discriminative function from the training data but just memorizes the training data instead. 
+
+
+\begin{table*}[!htbp]
+\caption {List of hyper-parameters tuned in different learners.}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c|l|c|c|l}
+\hline
+\rowcolor[HTML]{EFEFEF}
+\textbf{Learner} & \multicolumn{1}{c|}{\textbf{Parameters}} & \textbf{Default} & \textbf{Tuning Range} & \multicolumn{1}{c}{\textbf{Description}} \\ \hline
+\multirow{6}{*}{Random Forest} & n\_estimators & 10 & {[}10,150{]} & The number of trees in the forest. \\ 
+ & min\_samples\_leaf & 1 & {[}1,20{]} & The minimum number of samples required to be at a leaf node. \\  
+ & min\_samples\_split & 2 & {[}2,20{]} & The minimum number of samples required to split an internal node. \\ 
+ & max\_leaf\_nodes & None & {[}2,50{]} & Grow trees with  max\_leaf\_nodes in best-first fashion. \\  
+ & max\_features & auto & {[}0.01,1{]} & The number of features to consider when looking for the best split \\  
+ & max\_depth & None & {[}1,10{]} & The maximum depth of the tree. \\ \hline
+\multirow{3}{*}{Logistic Regression} & C & 1.0 & {[}1.0,10.0{]} & Inverse of regularization strength. \\  
+ & max\_iter & 100 & {[}50,200{]} & Useful only for the newton-cg, sag and lbfgs solvers. \\  
+ & verbose & 0 & {[}0,10{]} & For the liblinear and lbfgs solvers set verbose to any positive number for verbosity. \\ \hline
+\multirow{6}{*}{Multilayer Perceptron} & alpha & 0.0001 & {[}0.0001,0.001{]} & L2 penalty (regularization term) parameter. \\  
+ & learning\_rate\_init & 0.001 & {[}0.001,0.01{]} & The initial learning rate used. \\
+ & power\_t & 0.5 & {[}0.1,1{]} & The exponent for inverse scaling learning rate. \\
+ & max\_iter & 200 & {[}50,300{]} & Maximum number of iterations. \\ 
+ & momentum & 0.9 & {[}0.1,1{]} & Momentum for gradient descent update. \\ 
+ & n\_iter\_no\_change & 10 & {[}1,100{]} & Maximum number of epochs to not meet tol improvement. \\ \hline
+\multirow{2}{*}{K Nearest Neighbor} & leaf\_size & 30 & {[}10,100{]} & Leaf size passed to BallTree or KDTree. \\  
+ & n\_neighbors & 5 & {[}1,10{]} & Number of neighbors to use by default for kneighbors queries. \\ \hline
+Naive Bayes & var\_smoothing & 1e-9 & [0.0,1.0] & Portion of the largest variance of all features that is added to variances for calculation stability. \\ \hline
+\end{tabular}
+}
+\label{table:hyperparameter}
+\end{table*}
+
+
+\subsection{Hyperparameter Tuning Range of Learners}
+
+We implement our hyperparameter optimization techniques in scikit-learn. We choose scikit-learn because it integrates well-defined prediction learners as well as many configuration that we can choose. We select a group of hyperparameters for each learners in scikit-learn for the purpose of tuning. Table~\ref{table:hyperparameter} lists all the hyperparameters we select. We choose these ``tuning range'' for several reasons: (1) These ranges include the default value. (2) We could achieve a large gains in performance of our defect predictors by exploring these ranges. (3) These ranges are sufficient in tuning for this work.
+
+% \begin{table*}[!htb]
+% \caption {Comparison of Evaluation Results with DE tuning algorithm.}
+% \begin{threeparttable}
+% \resizebox{\textwidth}{!}{
+% \begin{tabular}{|c|l|c|r|r|r|r|r|c|r|r|r|r|r|c|r|r|r|r|r|}
+% \hline
+% \rowcolor[HTML]{EFEFEF} 
+% \cellcolor[HTML]{EFEFEF} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}} & \multicolumn{6}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{DE3}} & \multicolumn{6}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{DE10}} & \multicolumn{6}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{DE20}} \\ \cline{3-20} 
+% \rowcolor[HTML]{EFEFEF} 
+% \multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Target}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Filter}}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{prec}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{F}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{G}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{prec}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{F}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{G}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{prec}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{F}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{G}} \\ \hline
+%  & train & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 \\ \cline{2-20} 
+%  & \cellcolor[HTML]{EFEFEF}farsecsq & RF & 48.7 & 1.4 & 16.5 & 24.7 & 65.2 & RF & 48.7 & 1.3 & 17.7 & 25.9 & 65.2 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}53.0 & \cellcolor[HTML]{EFEFEF}1.4 & \cellcolor[HTML]{EFEFEF}17.2 & \cellcolor[HTML]{EFEFEF}26.0 & \cellcolor[HTML]{EFEFEF}68.9 \\ 
+%  & farsectwo & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 333. & 21.3 & 27.1 \\ 
+%  & farsec & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 \\  
+%  & clni & LR & 14.8 & 0.1 & 35.4 & 20.9 & 25.8 & LR & 14.8 & 0.1 & 35.4 & 20.9 & 25.8 & LR & 14.8 & 0.1 & 35.4 & 20.9 & 25.8 \\  
+%  & clnifarsecsq & RF & 47.8 & 1.4 & 15.8 & 23.7 & 64.4 & RF & 47.8 & 1.4 & 15.8 & 23.7 & 64.4 & RF & 49.6 & 1.4 & 16.3 & 24.6 & 66.0 \\ 
+%  & clnifarsectwo & MP & 15.7 & 0.1 & 46.2 & 23.4 & 27.1 & MP & 16.5 & 0.1 & 40.4 & 23.5 & 28.4 & MP & 16.5 & 0.1 & 40.4 & 23.5 & 28.4 \\  
+% \multirow{-8}{*}{Chromium} & clnifarsec & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 & LR & 15.7 & 0.2 & 33.3 & 21.3 & 27.1 \\ \hline
+%  & train & MP & 33.3 & 10.7 & 3.6 & 6.6 & 48.5 & MP & 16.7 & 2.0 & 9.1 & 11.8 & 28.5 & MP & 16.7 & 0.2 & 50.0 & 25.0 & 28.6 \\ 
+%  & farsecsq & NB & 16.7 & 6.7 & 2.9 & 5.0 & 28.3 & NB & 16.7 & 6.7 & 2.9 & 5.0 & 28.3 & NB & 16.7 & 6.7 & 2.9 & 5.0 & 28.3 \\  
+%  & farsectwo & MP & 16.7 & 5.9 & 3.3 & 5.6 & 28.3 & MP & 16.7 & 5.9 & 3.3 & 5.6 & 28.3 & MP & 16.7 & 5.9 & 3.3 & 5.6 & 28.3 \\  
+%  & \cellcolor[HTML]{EFEFEF}farsec & NB & 66.7 & 25.3 & 3.1 & 5.9 & 70.5 & NB & 66.7 & 25.3 & 3.1 & 5.9 & 70.5 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & \cellcolor[HTML]{EFEFEF}25.3 & \cellcolor[HTML]{EFEFEF}3.1 & \cellcolor[HTML]{EFEFEF}5.9 & \cellcolor[HTML]{EFEFEF}70.5 \\  
+%  & clni & MP & 16.7 & 3.8 & 5.0 & 7.7 & 28.4 & MP & 16.7 & 3.8 & 5.0 & 7.7 & 28.4 & MP & 16.7 & 1.8 & 10.0 & 12.5 & 28.5 \\
+%  & clnifarsecsq & NB & 16.7 & 8.5 & 2.3 & 4.1 & 28.2 & NB & 16.7 & 8.5 & 2.3 & 4.1 & 28.2 & NB & 16.7 & 8.5 & 2.3 & 4.1 & 28.2 \\ 
+%  & clnifarsectwo & MP & 16.7 & 6.3 & 3.1 & 5.3 & 28.3 & MP & 16.7 & 6.3 & 3.1 & 5.3 & 28.3 & MP & 16.7 & 6.3 & 3.1 & 5.3 & 28.3 \\ 
+% \multirow{-8}{*}{Wicket} & clnifarsec & MP & 16.7 & 0.2 & 50.0 & 25.0 & 28.6 & MP & 16.7 & 0.2 & 50.0 & 25.0 & 28.6 & MP & 16.7 & 0.2 & 50.0 & 25.0 & 28.6 \\ \hline
+%  & train & MP & 28.6 & 0.6 & 40.0 & 33.3 & 44.4 & MP & 28.6 & 0.6 & 40.0 & 33.3 & 44.4 & MP & 28.6 & 0.6 & 40.0 & 33.3 & 44.4 \\  
+%  & farsecsq & RF & 57.1 & 2.6 & 23.5 & 33.3 & 72.0 & RF & 57.1 & 2.2 & 26.7 & 36.4 & 72.1 & RF & 57.1 & 2.0 & 28.6 & 38.1 & 72.2 \\ 
+%  & farsectwo & RF & 57.1 & 2.8 & 22.2 & 32.0 & 72.0 & RF & 57.1 & 2.8 & 22.2 & 32.0 & 72.0 & RF & 57.1 & 2.8 & 22.2 & 32.0 & 72.0 \\ 
+%  & farsec & RF & 57.1 & 2.2 & 26.7 & 36.4 & 72.1 & RF & 57.1 & 2.2 & 26.7 & 36.4 & 72.1 & RF & 57.1 & 1.8 & 30.8 & 40.0 & 72.2 \\  
+%  & clni & MP & 28.6 & 0.6 & 40.0 & 33.3 & 44.4 & MP & 28.6 & 0.6 & 40.0 & 33.3 & 44.4 & MP & 28.6 & 0.6 & 40.0 & 33.3 & 44.4 \\ 
+%  & \cellcolor[HTML]{EFEFEF}clnifarsecsq & RF & 57.1 & 2.4 & 25.0 & 34.7 & 72.1 & RF & 57.1 & 1.6 & 33.3 & 42.1 & 72.3 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & \cellcolor[HTML]{EFEFEF}1.2 & \cellcolor[HTML]{EFEFEF}40.0 & \cellcolor[HTML]{EFEFEF}47.1 & \cellcolor[HTML]{EFEFEF}72.4 \\  
+%  & clnifarsectwo & RF & 57.1 & 2.8 & 22.2 & 32.0 & 72.0 & RF & 57.1 & 2.6 & 23.5 & 33.3 & 72.0 & RF & 57.1 & 2.6 & 23.5 & 33.3 & 72.0 \\ 
+% \multirow{-8}{*}{Ambari} & clnifarsec & RF & 57.1 & 2.2 & 26.7 & 36.3 & 72.1 & RF & 57.1 & 1.8 & 30.8 & 40.0 & 72.2 & RF & 57.1 & 1.6 & 33.3 & 42.1 & 72.3 \\ \hline
+%  & train & LR & 11.1 & 2.1 & 16.7 & 13.3 & 20.0 & LR & 11.1 & 2.1 & 16.7 & 13.3 & 20.0 & MP & 16.7 & 1.7 & 27.3 & 20.7 & 28.5 \\ 
+%  & farsecsq & RF & 22.2 & 6.0 & 12.1 & 15.7 & 35.9 & RF & 27.8 & 5.6 & 15.6 & 20.0 & 42.9 & RF & 27.8 & 5.3 & 16.1 & 20.4 & 42.9 \\ 
+%  & farsectwo & MP & 72.2 & 39.6 & 6.4 & 11.7 & 65.8 & MP & 38.9 & 13.7 & 9.6 & 15.4 & 53.6 & MP & 33.3 & 7.0 & 15.0 & 20.7 & 49.1 \\ 
+%  & farsec & MP & 11.1 & 1.5 & 22.2 & 14.8 & 20.0 & MP & 11.1 & 0.8 & 33.3 & 16.7 & 20.0 & MP & 11.1 & 0.6 & 40.0 & 17.4 & 20.0 \\ 
+%  & clni & MP & 16.7 & 1.2 & 33.3 & 22.2 & 28.5 & MP & 16.7 & 1.2 & 33.3 & 22.2 & 28.5 & MP & 16.7 & 1.2 & 33.3 & 22.2 & 28.5 \\ 
+%  & \cellcolor[HTML]{EFEFEF}clnifarsecsq & RF & 38.9 & 13.7 & 9.6 & 15.4 & 53.6 & RF & 38.9 & 13.5 & 9.7 & 15.6 & 53.7 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}38.9 & \cellcolor[HTML]{EFEFEF}8.7 & \cellcolor[HTML]{EFEFEF}14.3 & \cellcolor[HTML]{EFEFEF}20.9 & \cellcolor[HTML]{EFEFEF}54.5 \\ 
+%  & clnifarsectwo & RF & 11.1 & 0.2 & 66.7 & 19.0 & 20.0 & RF & 16.7 & 0.6 & 50.0 & 25.0 & 28.5 & RF & 16.7 & 0.6 & 50.0 & 25.0 & 28.5 \\
+% \multirow{-8}{*}{Camel} & clnifarsec & MP & 11.1 & 0.6 & 40.0 & 17.4 & 20.0 & MP & 11.1 & 0.6 & 40.0 & 17.4 & 20.0 & MP & 16.7 & 1.2 & 33.3 & 22.2 & 28.5 \\ \hline
+%  & train & RF & 28.6 & 0.7 & 80.0 & 42.1 & 44.4 & RF & 28.5 & 0.4 & 85.7 & 42.9 & 44.4 & MP & 33.3 & 1.5 & 66.7 & 44.4 & 49.8 \\ 
+%  & farsecsq & KNN & 59.5 & 40.6 & 11.8 & 19.8 & 59.5 & KNN & 59.5 & 40.6 & 11.8 & 19.8 & 59.5 & KNN & 59.5 & 40.6 & 11.8 & 19.8 & 59.5 \\  
+%  & farsectwo & RF & 50.0 & 17.2 & 21.0 & 29.6 & 62.3 & RF & 50.0 & 17.2 & 21.0 & 29.6 & 62.3 & RF & 45.2 & 10.9 & 27.5 & 34.2 & 60.0 \\ 
+%  & farsec & LR & 38.1 & 2.4 & 59.3 & 46.4 & 54.8 & LR & 38.1 & 2.4 & 59.3 & 46.4 & 54.8 & LR & 40.5 & 2.6 & 58.6 & 47.9 & 57.2 \\  
+%  & clni & RF & 31.0 & 8.7 & 76.5 & 44.1 & 47.2 & RF & 31.0 & 6.6 & 81.3 & 44.8 & 47.2 & RF & 33.3 & 6.6 & 82.4 & 47.5 & 49.9 \\ 
+%  & \cellcolor[HTML]{EFEFEF}clnifarsecsq & KNN & 59.5 & 41.0 & 11.7 & 19.6 & 59.2 & KNN & 59.5 & 40.8 & 11.8 & 19.7 & 59.3 & \cellcolor[HTML]{EFEFEF}KNN & \cellcolor[HTML]{EFEFEF}59.5 & \cellcolor[HTML]{EFEFEF}40.6 & \cellcolor[HTML]{EFEFEF}11.8 & \cellcolor[HTML]{EFEFEF}19.8 & \cellcolor[HTML]{EFEFEF}59.5 \\ 
+%  & clnifarsectwo & RF & 42.9 & 10.7 & 26.9 & 33.0 & 57.9 & RF & 42.9 & 10.7 & 26.9 & 33.0 & 57.9 & RF & 40.5 & 8.7 & 29.8 & 34.3 & 56.1 \\ 
+% \multirow{-8}{*}{Derby} & clnifarsec & LR & 38.1 & 2.8 & 55.2 & 45.1 & 54.7 & RF & 33.3 & 6.6 & 82.4 & 47.5 & 49.9 & RF & 35.1 & 8.7 & 78.9 & 49.2 & 52.5 \\ \hline
+% \end{tabular}
+% }
+% \begin{tablenotes}
+%     \item[1] Abbreviation of learners: \textbf{LR} (Logistic Regression), \textbf{RF} (Random Forest), \textbf{MP} (Multilayer Perceptron), \textbf{NB} (Naive  Bayes), \textbf{KNN} (K Nearest Neighbor).
+% \end{tablenotes}
+% \end{threeparttable}
+% \end{table*}
+
+
+
+
+
+
+% \begin{table*}[!htb]
+% \caption {Comparison of Evaluation Results without and with SMOTE Data Balancing.}
+% \begin{threeparttable}
+% \resizebox{\textwidth}{!}{
+% \begin{tabular}{c|l|c|r|r|r|r|r|c|r|r|r|r|r|c|r|r|r|r|r}
+% \hline
+% \rowcolor[HTML]{EFEFEF} 
+% \cellcolor[HTML]{EFEFEF} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}} & \multicolumn{6}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{Without SMOTE}} & \multicolumn{6}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{With Default SMOTE}} & \multicolumn{6}{c}{\cellcolor[HTML]{EFEFEF}\textbf{With Tuned SMOTE}} \\ \cline{3-20} 
+% \rowcolor[HTML]{EFEFEF} 
+% \multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Target}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{EFEFEF}\textbf{Filter}}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{prec}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{F}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{G}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{prec}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{F}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{G}} & \textbf{Learner} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pd}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{pf}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{prec}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{F}} & \multicolumn{1}{c}{\cellcolor[HTML]{EFEFEF}\textbf{G}} \\ \hline
+%  & train & MP & 15.7 & 0.1 & 51.4 & 24.0 & 27.1 & NB & 79.1 & 23.2 & 1.8 & 3.6 & 77.9 & RF & 52.2 & 2.9 & 9.0 & 15.4 & 67.9 \\  
+%  & farsecsq & RF & 37.4 & 0.7 & 21.4 & 27.2 & 54.3 & NB & 86.1 & 32.5 & 1.4 & 2.8 & 75.7 & RF & 56.5 & 6.0 & 5.0 & 9.1 & 70.6 \\  
+%  & farsectwo & MP & 15.7 & 0.1 & 54.5 & 24.3 & 27.1 & RF & 80.9 & 25.8 & 1.7 & 3.3 & 77.4 & RF & 44.3 & 2.0 & 10.9 & 17.6 & 61.1 \\ 
+%  & farsec & MP & 15.7 & 0.1 & 50.0 & 23.8 & 27.1 & RF & 73.0 & 17.5 & 2.3 & 4.4 & 77.5 & RF & 54.8 & 3.2 & 8.6 & 14.8 & 70.0 \\ 
+%  & clni & MP & 13.9 & 0.1 & 53.3 & 22.1 & 24.4 & NB & 71.3 & 19.6 & 2.0 & 3.8 & 75.6 & RF & 44.3 & 3.1 & 7.4 & 12.7 & 60.9 \\ 
+%  & \cellcolor[HTML]{EFEFEF}clnifarsecsq & MP & 57.4 & 7.7 & 3.9 & 7.3 & 70.8 & NB & 87.0 & 29.5 & 1.6 & 3.1 & 77.9 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}64.3 & \cellcolor[HTML]{EFEFEF}7.8 & \cellcolor[HTML]{EFEFEF}4.3 & \cellcolor[HTML]{EFEFEF}8.1 & \cellcolor[HTML]{EFEFEF}75.8 \\  
+%  & clnifarsectwo & MP & 15.6 & 0.1 & 46.2 & 23.4 & 27.1 & NB & 71.3 & 16.1 & 2.4 & 4.6 & 77.1 & \cellcolor[HTML]{FFFFFF}RF & 52.2 & 3.2 & 8.3 & 14.4 & 67.8 \\ 
+% \multirow{-8}{*}{Chromium} & clnifarsec & MP & 15.7 & 0.1 & 45.0 & 23.2 & 27.1 & NB & 65.2 & 18.6 & 1.9 & 3.7 & 72.4 & RF & 47.8 & 2.8 & 8.7 & 14.7 & 64.1 \\ \hline
+%  & train & NB & 0.0 & 5.1 & 0.0 & 0.0 & 0.0 & NB & 50.0 & 26.7 & 2.2 & 4.3 & 59.4 & NB & 50.0 & 11.9 & 4.8 & 8.8 & 63.8 \\ 
+%  & \cellcolor[HTML]{FFFFFF}farsecsq & NB & 83.3 & 66.8 & 1.5 & 2.9 & 47.5 & KNN & 16.7 & 5.3 & 3.7 & 6.1 & 28.3 & \cellcolor[HTML]{FFFFFF}NB & \cellcolor[HTML]{FFFFFF}83.3 & \cellcolor[HTML]{FFFFFF}66.8 & \cellcolor[HTML]{FFFFFF}1.5 & \cellcolor[HTML]{FFFFFF}2.9 & \cellcolor[HTML]{FFFFFF}47.5 \\ 
+%  & farsectwo & NB & 66.7 & 61.5 & 1.3 & 2.5 & 48.8 & NB & 66.7 & 69.2 & 1.2 & 2.3 & 42.1 & NB & 66.7 & 62.6 & 1.3 & 2.5 & 50.0 \\  
+%  & \cellcolor[HTML]{EFEFEF}farsec & NB & 66.7 & 23.1 & 3.4 & 6.5 & 71.4 & NB & 66.7 & 40.3 & 2.0 & 3.8 & 63.0 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & \cellcolor[HTML]{EFEFEF}23.1 & \cellcolor[HTML]{EFEFEF}3.4 & \cellcolor[HTML]{EFEFEF}6.5 & \cellcolor[HTML]{EFEFEF}71.4 \\ 
+%  & clni & NB & 0.0 & 4.5 & 0.0 & 0.0 & 0.0 & NB & 33.3 & 23.3 & 1.7 & 3.3 & 46.5 & NB & 16.7 & 6.7 & 2.9 & 5.0 & 28.3 \\  
+%  & clnifarsecsq & NB & 83.3 & 66.8 & 1.5 & 2.9 & 47.5 & NB & 83.3 & 66.8 & 1.5 & 2.9 & 47.5 & NB & 83.3 & 66.8 & 1.5 & 2.9 & 47.5 \\  
+%  & clnifarsectwo & NB & 66.7 & 61.3 & 1.3 & 2.6 & 48.9 & NB & 66.7 & 61.3 & 1.3 & 2.6 & 48.9 & NB & 66.7 & 61.3 & 1.3 & 2.6 & 48.9 \\  
+% \multirow{-8}{*}{Wicket} & \cellcolor[HTML]{FFFFFF}clnifarsec & NB & 66.7 & 23.1 & 3.4 & 6.5 & 71.4 & NB & 66.7 & 32.6 & 2.4 & 4.7 & 67.0 & \cellcolor[HTML]{FFFFFF}NB & \cellcolor[HTML]{FFFFFF}66.7 & \cellcolor[HTML]{FFFFFF}22.9 & \cellcolor[HTML]{FFFFFF}3.4 & \cellcolor[HTML]{FFFFFF}6.5 & \cellcolor[HTML]{FFFFFF}71.5 \\ \hline
+%  & train & LR & 28.6 & 0.8 & 33.3 & 30.8 & 44.4 & LR & 57.1 & 16.6 & 4.7 & 8.6 & 67.8 & LR & 42.9 & 7.9 & 7.1 & 12.2 & 58.5 \\  
+%  & farsecsq & RF & 42.9 & 7.3 & 7.7 & 13.0 & 58.6 & RF & 42.8 & 16.6 & 3.5 & 6.5 & 56.6 & RF & 57.1 & 16.0 & 4.8 & 8.9 & 6.8 \\  
+%  & \cellcolor[HTML]{FFFFFF}farsectwo & \cellcolor[HTML]{FFFFFF}RF & \cellcolor[HTML]{FFFFFF}42.8 & \cellcolor[HTML]{FFFFFF}4.3 & \cellcolor[HTML]{FFFFFF}12.5 & \cellcolor[HTML]{FFFFFF}19.4 & \cellcolor[HTML]{FFFFFF}59.2 & RF & 57.1 & 10.3 & 7.2 & 12.9 & 69.8 & RF & 28.6 & 2.6 & 13.3 & 18.2 & 44.2 \\  
+%  & farsec & MP & 28.6 & 2.0 & 16.7 & 21.1 & 44.2 & RF & 57.1 & 4.7 & 14.8 & 23.5 & 71.5 & RF & 28.6 & 1.4 & 22.2 & 25.0 & 44.3 \\ 
+%  & clni & LR & 28.6 & 0.1 & 33.3 & 30.8 & 44.4 & RF & 57.1 & 2.6 & 23.5 & 33.3 & 72.0 & RF & 42.9 & 1.6 & 27.3 & 33.3 & 59.7 \\  
+%  & \cellcolor[HTML]{FFFFFF}clnifarsecsq & RF & 57.1 & 14.2 & 5.4 & 9.9 & 68.6 & RF & 57.1 & 11.6 & 6.6 & 11.8 & 69.5 & \cellcolor[HTML]{FFFFFF}RF & \cellcolor[HTML]{FFFFFF}57.1 & \cellcolor[HTML]{FFFFFF}8.7 & \cellcolor[HTML]{FFFFFF}8.5 & \cellcolor[HTML]{FFFFFF}14.8 & \cellcolor[HTML]{FFFFFF}70.3 \\  
+%  & \cellcolor[HTML]{EFEFEF}clnifarsectwo & RF & 42.9 & 3.4 & 15.0 & 22.2 & 59.4 & RF & 57.1 & 7.5 & 9.8 & 16.7 & 70.6 & \cellcolor[HTML]{EFEFEF}RF & \cellcolor[HTML]{EFEFEF}57.1 & \cellcolor[HTML]{EFEFEF}4.1 & \cellcolor[HTML]{EFEFEF}16.7 & \cellcolor[HTML]{EFEFEF}25.8 & \cellcolor[HTML]{EFEFEF}71.6 \\ 
+% \multirow{-8}{*}{Ambari} & clnifarsec & LR & 28.5 & 2.8 & 12.5 & 17.4 & 44.2 & RF & 57.1 & 3.7 & 18.2 & 27.6 & 71.7 & RF & 42.9 & 1.2 & 33.3 & 37.5 & 59.8 \\ \hline
+%  & train & NB & 16.7 & 10.8 & 5.5 & 8.2 & 28.1 & LR & 22.2 & 18.5 & 4.3 & 7.2 & 34.9 & LR & 22.2 & 9.8 & 7.8 & 11.6 & 35.7 \\  
+%  & \cellcolor[HTML]{FFFFFF}farsecsq & RF & 38.9 & 17.6 & 7.6 & 12.7 & 52.8 & RF & 33.3 & 17.0 & 6.8 & 11.3 & 47.6 & \cellcolor[HTML]{FFFFFF}RF & \cellcolor[HTML]{FFFFFF}44.4 & \cellcolor[HTML]{FFFFFF}19.3 & \cellcolor[HTML]{FFFFFF}7.9 & \cellcolor[HTML]{FFFFFF}13.4 & \cellcolor[HTML]{FFFFFF}57.3 \\ 
+%  & farsectwo & NB & 61.1 & 50.8 & 4.3 & 8.0 & 54.5 & RF & 22.2 & 5.0 & 14.3 & 17.4 & 36.0 & NB & 66.7 & 57.7 & 4.1 & 7.8 & 51.8 \\  
+%  & farsec & NB & 22.2 & 12.4 & 6.3 & 9.8 & 35.4 & NB & 33.3 & 39.4 & 3.1 & 5.6 & 43.0 & NB & 22.2 & 11.2 & 6.9 & 10.5 & 35.5 \\ 
+%  & clni & NB & 16.7 & 10.6 & 5.6 & 8.3 & 28.1 & NB & 38.9 & 36.9 & 3.8 & 6.9 & 48.1 & LR & 16.7 & 3.9 & 13.6 & 15.0 & 28.4 \\ 
+%  & clnifarsecsq & NB & 83.3 & 78.4 & 3.8 & 7.3 & 34.3 & RF & 22.2 & 11.8 & 6.6 & 10.1 & 35.5 & RF & 33.3 & 16.6 & 7.0 & 11.5 & 47.6 \\ 
+%  & \cellcolor[HTML]{EFEFEF}clnifarsectwo & NB & 61.1 & 50.0 & 4.4 & 8.1 & 55.0 & NB & 72.2 & 69.1 & 3.8 & 7.1 & 43.3 & \cellcolor[HTML]{EFEFEF}NB & \cellcolor[HTML]{EFEFEF}66.7 & \cellcolor[HTML]{EFEFEF}55.8 & \cellcolor[HTML]{EFEFEF}4.3 & \cellcolor[HTML]{EFEFEF}8.0 & \cellcolor[HTML]{EFEFEF}53.2 \\  
+% \multirow{-8}{*}{Camel} & clnifarsec & NB & 22.2 & 11.6 & 6.7 & 10.3 & 35.5 & LR & 33.3 & 17.4 & 6.7 & 11.1 & 47.5 & LR & 22.2 & 5.4 & 13.3 & 16.7 & 36.0 \\ \hline
+%  & train & NB & 45.2 & 3.5 & 54.3 & 49.4 & 61.6 & NB & 59.5 & 21.8 & 20.0 & 29.9 & 67.6 & NB & 50.0 & 3.7 & 55.3 & 52.5 & 65.8 \\  
+%  & farsecsq & KNN & 35.7 & 26.0 & 11.2 & 17.0 & 48.2 & RF & 54.7 & 51.7 & 8.8 & 15.2 & 51.3 & RF & 66.7 & 53.1 & 10.3 & 17.9 & 55.1 \\  
+%  & farsectwo & RF & 42.9 & 14.2 & 21.7 & 28.8 & 57.2 & RF & 54.7 & 25.3 & 16.5 & 25.4 & 63.2 & RF & 47.6 & 12.7 & 25.6 & 33.3 & 61.6 \\  
+%  & farsec & NB & 47.6 & 4.1 & 51.3 & 49.4 & 63.6 & LR & 59.5 & 12.7 & 30.1 & 40.0 & 70.8 & LR & 42.9 & 3.9 & 50.0 & 46.2 & 59.3 \\ 
+%  & \cellcolor[HTML]{EFEFEF}clni & NB & 45.2 & 3.5 & 54.3 & 49.4 & 61.6 & NB & 59.5 & 15.3 & 26.3 & 36.5 & 69.9 & \cellcolor[HTML]{EFEFEF}LR & \cellcolor[HTML]{EFEFEF}52.3 & \cellcolor[HTML]{EFEFEF}8.7 & \cellcolor[HTML]{EFEFEF}35.5 & \cellcolor[HTML]{EFEFEF}42.3 & \cellcolor[HTML]{EFEFEF}66.6 \\  
+%  & clnifarsecsq & RF & 71.4 & 57.9 & 10.2 & 17.8 & 53.0 & RF & 76.2 & 74.7 & 8.6 & 15.4 & 38.0 & RF & 78.6 & 70.3 & 9.3 & 16.6 & 43.1 \\  
+%  & clnifarsectwo & RF & 35.7 & 8.5 & 27.8 & 31.3 & 51.4 & RF & 52.4 & 26.2 & 15.5 & 23.9 & 61.3 & RF & 35.7 & 9.8 & 25.0 & 29.4 & 51.2 \\  
+% \multirow{-8}{*}{Derby} & clnifarsec & NB & 47.6 & 3.9 & 52.6 & 50.0 & 63.7 & RF & 52.3 & 12.2 & 28.2 & 36.7 & 65.7 & NB & 47.6 & 3.7 & 54.1 & 50.6 & 63.7 \\ \hline
+% \end{tabular}
+% }
+% \begin{tablenotes}
+%     \item[1] Abbreviation of learners: \textbf{LR} (Logistic Regression), \textbf{RF} (Random Forest), \textbf{MP} (Multilayer Perceptron), \textbf{NB} (Naive  Bayes), \textbf{KNN} (K Nearest Neighbor).
+% \end{tablenotes}
+% \end{threeparttable}
+% \end{table*}
+
+
+% \begin{figure*}
+% \renewcommand{\baselinestretch}{0.65} 
+%  \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% \vspace{2.5mm}
+% \begin{center}a. The recall results of project Chromium with FARSEC and CLNI filtering\end{center}
+% \noindent \begin{tabular}{llrrc}
+%   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% 1 &      clnifarsecsq\_NB &    68 &  0 & \quart{68}{0}{68}{100} \\     
+% 1 &      farsecsq\_NB &    68 &  0 & \quart{68}{0}{68}{100} \\             
+% 2 &      clnifarsecsq\_MP &    56 &  0 & \quart{56}{0}{56}{100} \\         
+% 2 &      farsecsq\_MP &    56 &  0 & \quart{56}{0}{56}{100} \\             
+% 3 &      clnifarsecsq\_LR &    49 &  0 & \quart{49}{0}{49}{100} \\         
+% 3 &      farsecsq\_LR &    49 &  0 & \quart{49}{0}{49}{100} \\             
+% 3 &      clni\_NB &    50 &  0 & \quart{50}{0}{50}{100} \\                 
+% 3 &      clnifarsec\_NB &    50 &  0 & \quart{50}{0}{50}{100} \\           
+% 3 &      farsec\_NB &    50 &  0 & \quart{50}{0}{50}{100} \\               
+% 3 &      clnifarsectwo\_NB &    50 &  0 & \quart{50}{0}{50}{100} \\        
+% 3 &      train\_NB &    50 &  0 & \quart{50}{0}{50}{100} \\                
+% 3 &      farsectwo\_NB &    50 &  0 & \quart{50}{0}{50}{100} \\            
+% 4 &      farsecsq\_RF &    27 &  11 & \quart{27}{11}{27}{100} \\           
+% 4 &      clnifarsecsq\_RF &    38 &  5 & \quart{35}{5}{38}{100} \\          
+% 5 &      clnifarsectwo\_MP &    14 &  0 & \quart{14}{0}{14}{100} \\         
+% 5 &      train\_MP &    16 &  2 & \quart{14}{2}{16}{100} \\                 
+% 5 &      farsectwo\_MP &    15 &  0 & \quart{15}{0}{15}{100} \\            
+% 5 &      farsec\_MP &    15 &  1 & \quart{14}{1}{15}{100} \\               
+% 5 &      clni\_MP &    15 &  1 & \quart{15}{1}{15}{100} \\                 
+% 6 &      clnifarsecsq\_KNN &    10 &  0 & \quart{10}{0}{10}{100} \\        
+% 6 &      farsecsq\_KNN &    10 &  0 & \quart{10}{0}{10}{100} \\            
+% 6 &      clnifarsec\_LR &    11 &  0 & \quart{11}{0}{11}{100} \\           
+% 6 &      clnifarsectwo\_LR &    11 &  0 & \quart{11}{0}{11}{100} \\        
+% 6 &      clni\_LR &    11 &  0 & \quart{11}{0}{11}{100} \\                 
+% 6 &      farsectwo\_LR &    12 &  0 & \quart{12}{0}{12}{100} \\             
+% 6 &      farsec\_LR &    12 &  0 & \quart{12}{0}{12}{100} \\                
+% 6 &      train\_LR &    12 &  0 & \quart{12}{0}{12}{100} \\                 
+% 6 &      clnifarsec\_MP &    12 &  0 & \quart{12}{0}{12}{100} \\           
+% 7 &      farsec\_RF &    3 &  1 & \quart{3}{1}{3}{100} \\                  
+% 7 &      train\_RF &    4 &  1 & \quart{3}{1}{4}{100} \\                   
+% 7 &      farsectwo\_RF &    4 &  1 & \quart{3}{1}{4}{100} \\               
+% 7 &      clni\_RF &    4 &  2 & \quart{4}{2}{4}{100} \\                    
+% 7 &      clnifarsec\_RF &    4 &  4 & \quart{4}{4}{4}{100} \\              
+% 7 &      clnifarsectwo\_RF &    6 &  3 & \quart{5}{3}{6}{100} \\           
+% 8 &      farsectwo\_KNN &    1 &  0 & \quart{1}{0}{1}{100} \\              
+% 8 &      train\_KNN &    1 &  0 & \quart{1}{0}{1}{100} \\                  
+% 8 &      clnifarsectwo\_KNN &    1 &  0 & \quart{1}{0}{1}{100} \\          
+% 8 &      clni\_KNN &    1 &  0 & \quart{1}{0}{1}{100} \\                   
+% 8 &      farsec\_KNN &    1 &  0 & \quart{1}{0}{1}{100} \\                 
+% 8 &      clnifarsec\_KNN &    1 &  0 & \quart{1}{0}{1}{100} \\             
+%     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %   1 & clnifarsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   1 &     farsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   2 &    farsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 & clnifarsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &       farsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &   clnifarsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   3 &         clni &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %   3 &        train &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   1 & farsectwo\_RF\_DE &    0.77  &  0.0 & \quart{79}{0}{79}{109} \\
+% %   2 &    farsectwo &    0.56  &  0.42 & \quart{0}{53}{53}{109} \\
+% %   2 & clnifarsectwo &    0.56  &  0.0 & \quart{53}{0}{53}{109} \\
+% %   3 &         clni &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 & clnifarsecsq &    0.14  &  0.14 & \quart{0}{17}{0}{109} \\
+% %   3 &        train &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 &     farsecsq &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %   3 &       farsec &    0.28  &  0.0 & \quart{17}{0}{17}{109} \\
+% %   3 &   clnifarsec &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %   1 &       farsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\
+% %   1 &   clnifarsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\ 
+% %   2 &         clni &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &        train &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &     farsecsq &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   3 & clnifarsecsq &    0.11  &  0.0 & \quart{24}{0}{24}{469} \\
+% %   4 &    farsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %   4 & clnifarsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %   1 & farsectwo\_RF\_DE &    0.68  &  0.0 & \quart{79}{0}{79}{132} \\
+% %   2 & clnifarsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   2 &     farsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   3 &       farsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   3 &   clnifarsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   4 &        train &    0.45  &  0.0 & \quart{42}{0}{42}{132} \\
+% %   5 & clnifarsectwo &    0.38  &  0.05 & \quart{22}{9}{31}{132} \\
+% %   5 &    farsectwo &    0.43  &  0.05 & \quart{34}{8}{39}{132} \\
+% %   6 &         clni &    0.21  &  0.05 & \quart{0}{8}{3}{132} \\
+
+
+
+%  %%% ----END HERE---------------------------------
+%   \end{tabular}} \end{minipage}}\hspace{12mm}
+% \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% % \begin{center}b. TPP results wit FARSEC and CLNI filtering\end{center}
+
+% % \noindent \begin{tabular}{llrrc}
+% %   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% %   \nm{Chromium}\\
+% %  \rowcolor{gray!20}   1* &      train &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %  \rowcolor{gray!20}   1* &      train\_DE &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq\_DE &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo\_DE &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec\_DE &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni\_DE &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq\_DE &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %     1 &      train &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec &    178 &  122 & \ofr \\
+% %     1 &      train\_DE &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq\_DE &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo\_DE &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq\_DE &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo\_DE &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec\_DE &    178 &  122 & \ofr \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   \rowcolor{gray!20}   1* &      train &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %   \rowcolor{gray!20}   1* &      train\_DE &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq\_DE &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo\_DE &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec\_DE &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni\_DE &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq\_DE &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %     \rowcolor{gray!20}   1* &      train &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq\_DE &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo\_DE &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec\_DE &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni\_DE &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq\_DE &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo\_DE &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec\_DE &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %     \rowcolor{gray!20}   1* &      train &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec &    99 &  444 & \ofr \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq\_DE &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo\_DE &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec\_DE &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni\_DE &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq\_DE &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo\_DE &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec\_DE &    99 &  444 & \ofr \\
+
+% %   %%% ----END HERE----------------------------------
+   
+   
+% %   \end{tabular}
+%   }
+
+% \end{minipage}
+% }
+%  \caption{
+% \%  WPP and TPP precision results of using default hyperparameter in scikit-learn and tuning using differential evolutionary (DE) algorithm
+%   }
+%  \label{fig:jur}
+% \end{figure*}
+
+
+% \begin{figure*}
+% \renewcommand{\baselinestretch}{0.65} 
+%  \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% \vspace{2.5mm}
+% \begin{center}a. The recall results of project Wicket with FARSEC and CLNI filtering\end{center}
+% \noindent \begin{tabular}{llrrc}
+%   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+%     1 &      clnifarsecsq\_NB &    83 &  0 & \quart{83}{0}{83}{100} \\
+%     1 &      farsecsq\_NB &    83 &  0 & \quart{83}{0}{83}{100} \\
+%     2 &      clnifarsec\_NB &    67 &  0 & \quart{67}{0}{67}{100} \\
+%     2 &      farsec\_NB &    67 &  0 & \quart{67}{0}{67}{100} \\
+%     2 &      clnifarsectwo\_NB &    67 &  0 & \quart{67}{0}{67}{100} \\
+%     2 &      farsectwo\_NB &    67 &  0 & \quart{67}{0}{67}{100} \\
+%     3 &      train\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsectwo\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      train\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsecsq\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsectwo\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      train\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsecsq\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsectwo\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clni\_NB &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsec\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      train\_RF\_DE3 &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsectwo\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsec\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clni\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsectwo\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clni\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      train\_NB &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clni\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      train\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsecsq\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsecsq\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      train\_MP\_DE3 &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      train\_KNN\_DE3 &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsecsq\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsecsq\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsecsq\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsectwo\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsec\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsecsq\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsec\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsectwo\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsec\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsectwo\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      farsec\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsec\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clnifarsec\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     3 &      clni\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\
+%     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %   1 & clnifarsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   1 &     farsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   2 &    farsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 & clnifarsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &       farsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &   clnifarsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   3 &         clni &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %   3 &        train &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   1 & farsectwo\_RF\_DE &    0.77  &  0.0 & \quart{79}{0}{79}{109} \\
+% %   2 &    farsectwo &    0.56  &  0.42 & \quart{0}{53}{53}{109} \\
+% %   2 & clnifarsectwo &    0.56  &  0.0 & \quart{53}{0}{53}{109} \\
+% %   3 &         clni &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 & clnifarsecsq &    0.14  &  0.14 & \quart{0}{17}{0}{109} \\
+% %   3 &        train &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 &     farsecsq &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %   3 &       farsec &    0.28  &  0.0 & \quart{17}{0}{17}{109} \\
+% %   3 &   clnifarsec &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %   1 &       farsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\
+% %   1 &   clnifarsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\ 
+% %   2 &         clni &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &        train &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &     farsecsq &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   3 & clnifarsecsq &    0.11  &  0.0 & \quart{24}{0}{24}{469} \\
+% %   4 &    farsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %   4 & clnifarsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %   1 & farsectwo\_RF\_DE &    0.68  &  0.0 & \quart{79}{0}{79}{132} \\
+% %   2 & clnifarsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   2 &     farsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   3 &       farsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   3 &   clnifarsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   4 &        train &    0.45  &  0.0 & \quart{42}{0}{42}{132} \\
+% %   5 & clnifarsectwo &    0.38  &  0.05 & \quart{22}{9}{31}{132} \\
+% %   5 &    farsectwo &    0.43  &  0.05 & \quart{34}{8}{39}{132} \\
+% %   6 &         clni &    0.21  &  0.05 & \quart{0}{8}{3}{132} \\
+
+
+
+%  %%% ----END HERE---------------------------------
+%   \end{tabular}} \end{minipage}}\hspace{12mm}
+% \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% % \begin{center}b. TPP results wit FARSEC and CLNI filtering\end{center}
+
+% % \noindent \begin{tabular}{llrrc}
+% %   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% %   \nm{Chromium}\\
+% %  \rowcolor{gray!20}   1* &      train &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %  \rowcolor{gray!20}   1* &      train\_DE &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq\_DE &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo\_DE &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec\_DE &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni\_DE &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq\_DE &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %     1 &      train &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec &    178 &  122 & \ofr \\
+% %     1 &      train\_DE &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq\_DE &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo\_DE &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq\_DE &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo\_DE &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec\_DE &    178 &  122 & \ofr \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   \rowcolor{gray!20}   1* &      train &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %   \rowcolor{gray!20}   1* &      train\_DE &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq\_DE &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo\_DE &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec\_DE &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni\_DE &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq\_DE &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %     \rowcolor{gray!20}   1* &      train &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq\_DE &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo\_DE &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec\_DE &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni\_DE &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq\_DE &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo\_DE &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec\_DE &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %     \rowcolor{gray!20}   1* &      train &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec &    99 &  444 & \ofr \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq\_DE &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo\_DE &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec\_DE &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni\_DE &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq\_DE &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo\_DE &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec\_DE &    99 &  444 & \ofr \\
+
+% %   %%% ----END HERE----------------------------------
+   
+   
+% %   \end{tabular}
+%   }
+
+% \end{minipage}
+% }
+%  \caption{
+% \%  WPP and TPP precision results of using default hyperparameter in scikit-learn and tuning using differential evolutionary (DE) algorithm
+%   }
+%  \label{fig:jur}
+% \end{figure*}
+
+
+% \begin{figure*}
+% \renewcommand{\baselinestretch}{0.65} 
+%  \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% \vspace{2.5mm}
+% \begin{center}a. The recall results of project Ambari with FARSEC and CLNI filtering\end{center}
+% \noindent \begin{tabular}{llrrc}
+%   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+%  1 &      clnifarsecsq\_NB &    86 &  0 & \quart{86}{0}{86}{100} \\    
+% 1 &      farsecsq\_NB &    86 &  0 & \quart{86}{0}{86}{100} \\        
+% 2 &      clnifarsectwo\_NB &    71 &  0 & \quart{71}{0}{71}{100} \\   
+% 2 &      farsectwo\_NB &    71 &  0 & \quart{71}{0}{71}{100} \\       
+% 3 &      clnifarsecsq\_LR &    56 &  0 & \quart{56}{0}{56}{100} \\    
+% 4 &      clnifarsecsq\_RF &    43 &  14 & \quart{28}{14}{43}{100} \\  
+% 4 &      clnifarsectwo\_LR &    43 &  0 & \quart{43}{0}{43}{100} \\   
+% 4 &      farsecsq\_RF &    43 &  13 & \quart{43}{13}{43}{100} \\      
+% 5 &      farsectwo\_LR &    28 &  0 & \quart{28}{0}{28}{100} \\       
+% 5 &      farsec\_LR &    28 &  0 & \quart{28}{0}{28}{100} \\          
+% 5 &      clnifarsec\_LR &    28 &  0 & \quart{28}{0}{28}{100} \\      
+% 5 &      clni\_LR &    28 &  0 & \quart{28}{0}{28}{100} \\            
+% 5 &      train\_LR &    28 &  0 & \quart{28}{0}{28}{100} \\           
+% 5 &      farsecsq\_LR &    28 &  0 & \quart{28}{0}{28}{100} \\        
+% 5 &      clnifarsecsq\_MP &    28 &  0 & \quart{28}{0}{28}{100} \\    
+% 5 &      farsectwo\_MP &    28 &  0 & \quart{28}{0}{28}{100} \\       
+% 5 &      farsec\_MP &    28 &  14 & \quart{14}{14}{28}{100} \\        
+% 5 &      farsecsq\_MP &    28 &  0 & \quart{28}{0}{28}{100} \\        
+% 5 &      clnifarsectwo\_RF &    28 &  42 & \quart{14}{42}{28}{100} \\ 
+% 5 &      clnifarsectwo\_MP &    28 &  14 & \quart{14}{14}{28}{100} \\ 
+% 6 &      farsectwo\_KNN &    14 &  0 & \quart{14}{0}{14}{100} \\      
+% 6 &      clnifarsectwo\_KNN &    14 &  0 & \quart{14}{0}{14}{100} \\  
+% 6 &      train\_MP &    14 &  0 & \quart{14}{0}{14}{100} \\           
+% 6 &      clni\_NB &    14 &  0 & \quart{14}{0}{14}{100} \\            
+% 6 &      farsectwo\_RF &    14 &  28 & \quart{0}{28}{14}{100} \\      
+% 6 &      clnifarsec\_NB &    14 &  0 & \quart{14}{0}{14}{100} \\      
+% 6 &      farsec\_NB &    14 &  0 & \quart{14}{0}{14}{100} \\          
+% 6 &      train\_NB &    14 &  0 & \quart{14}{0}{14}{100} \\           
+% 6 &      clnifarsecsq\_KNN &    14 &  0 & \quart{14}{0}{14}{100} \\   
+% 6 &      farsecsq\_KNN &    14 &  0 & \quart{14}{0}{14}{100} \\       
+% 6 &      clnifarsec\_MP &    14 &  0 & \quart{14}{0}{14}{100} \\      
+% 7 &      train\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\              
+% 7 &      train\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\             
+% 7 &      clni\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\               
+% 7 &      clni\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\              
+% 7 &      farsec\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\             
+% 7 &      farsec\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\            
+% 7 &      clnifarsec\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\        
+% 7 &      clnifarsec\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\         
+% 7 &      clni\_MP &    0 &  14 & \quart{0}{14}{0}{100} \\             
+%     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %   1 & clnifarsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   1 &     farsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   2 &    farsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 & clnifarsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &       farsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &   clnifarsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   3 &         clni &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %   3 &        train &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   1 & farsectwo\_RF\_DE &    0.77  &  0.0 & \quart{79}{0}{79}{109} \\
+% %   2 &    farsectwo &    0.56  &  0.42 & \quart{0}{53}{53}{109} \\
+% %   2 & clnifarsectwo &    0.56  &  0.0 & \quart{53}{0}{53}{109} \\
+% %   3 &         clni &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 & clnifarsecsq &    0.14  &  0.14 & \quart{0}{17}{0}{109} \\
+% %   3 &        train &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 &     farsecsq &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %   3 &       farsec &    0.28  &  0.0 & \quart{17}{0}{17}{109} \\
+% %   3 &   clnifarsec &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %   1 &       farsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\
+% %   1 &   clnifarsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\ 
+% %   2 &         clni &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &        train &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &     farsecsq &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   3 & clnifarsecsq &    0.11  &  0.0 & \quart{24}{0}{24}{469} \\
+% %   4 &    farsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %   4 & clnifarsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %   1 & farsectwo\_RF\_DE &    0.68  &  0.0 & \quart{79}{0}{79}{132} \\
+% %   2 & clnifarsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   2 &     farsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   3 &       farsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   3 &   clnifarsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   4 &        train &    0.45  &  0.0 & \quart{42}{0}{42}{132} \\
+% %   5 & clnifarsectwo &    0.38  &  0.05 & \quart{22}{9}{31}{132} \\
+% %   5 &    farsectwo &    0.43  &  0.05 & \quart{34}{8}{39}{132} \\
+% %   6 &         clni &    0.21  &  0.05 & \quart{0}{8}{3}{132} \\
+
+
+
+%  %%% ----END HERE---------------------------------
+%   \end{tabular}} \end{minipage}}\hspace{12mm}
+% \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% % \begin{center}b. TPP results wit FARSEC and CLNI filtering\end{center}
+
+% % \noindent \begin{tabular}{llrrc}
+% %   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% %   \nm{Chromium}\\
+% %  \rowcolor{gray!20}   1* &      train &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %  \rowcolor{gray!20}   1* &      train\_DE &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq\_DE &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo\_DE &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec\_DE &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni\_DE &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq\_DE &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %     1 &      train &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec &    178 &  122 & \ofr \\
+% %     1 &      train\_DE &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq\_DE &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo\_DE &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq\_DE &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo\_DE &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec\_DE &    178 &  122 & \ofr \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   \rowcolor{gray!20}   1* &      train &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %   \rowcolor{gray!20}   1* &      train\_DE &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq\_DE &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo\_DE &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec\_DE &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni\_DE &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq\_DE &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %     \rowcolor{gray!20}   1* &      train &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq\_DE &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo\_DE &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec\_DE &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni\_DE &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq\_DE &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo\_DE &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec\_DE &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %     \rowcolor{gray!20}   1* &      train &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec &    99 &  444 & \ofr \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq\_DE &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo\_DE &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec\_DE &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni\_DE &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq\_DE &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo\_DE &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec\_DE &    99 &  444 & \ofr \\
+
+% %   %%% ----END HERE----------------------------------
+   
+   
+% %   \end{tabular}
+%   }
+
+% \end{minipage}
+% }
+%  \caption{
+% \%  WPP and TPP precision results of using default hyperparameter in scikit-learn and tuning using differential evolutionary (DE) algorithm
+%   }
+%  \label{fig:jur}
+% \end{figure*}
+
+
+
+% \begin{figure*}
+% \renewcommand{\baselinestretch}{0.65} 
+%  \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% \vspace{2.5mm}
+% \begin{center}a. The recall results of project Camel with FARSEC and CLNI filtering\end{center}
+% \noindent \begin{tabular}{llrrc}
+%   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% 1 &      clnifarsecsq\_NB &    83 &  0 & \quart{83}{0}{83}{100} \\
+% 1 &      farsecsq\_NB &    83 &  0 & \quart{83}{0}{83}{100} \\             
+% 2 &      clnifarsectwo\_NB &    61 &  0 & \quart{61}{0}{61}{100} \\        
+% 2 &      farsectwo\_NB &    61 &  0 & \quart{61}{0}{61}{100} \\            
+% 3 &      clnifarsecsq\_RF &    22 &  11 & \quart{17}{11}{22}{100} \\       
+% 3 &      clnifarsec\_NB &    22 &  0 & \quart{22}{0}{22}{100} \\           
+% 3 &      farsec\_NB &    22 &  0 & \quart{22}{0}{22}{100} \\               
+% 3 &      farsecsq\_RF &    22 &  6 & \quart{22}{6}{22}{100} \\             
+% 4 &      clnifarsecsq\_LR &    17 &  0 & \quart{17}{0}{17}{100} \\         
+% 4 &      clni\_NB &    17 &  0 & \quart{17}{0}{17}{100} \\                 
+% 4 &      train\_NB &    17 &  0 & \quart{17}{0}{17}{100} \\                
+% 4 &      farsecsq\_LR &    17 &  0 & \quart{17}{0}{17}{100} \\             
+% 5 &      clnifarsecsq\_MP &    11 &  0 & \quart{11}{0}{11}{100} \\         
+% 5 &      farsecsq\_MP &    11 &  0 & \quart{11}{0}{11}{100} \\             
+% 6 &      train\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\                   
+% 6 &      train\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\                  
+% 6 &      train\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\                   
+% 6 &      farsec\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\                  
+% 6 &      clnifarsec\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\              
+% 6 &      clni\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\                    
+% 6 &      clni\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\                     
+% 6 &      clni\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\                    
+% 6 &      train\_LR &    0 &  0 & \quart{0}{0}{0}{100} \\                   
+% 6 &      farsectwo\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\               
+% 6 &      farsec\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\                  
+% 6 &      farsec\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\                  
+% 6 &      clnifarsec\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\              
+% 6 &      clnifarsectwo\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\           
+% 6 &      farsec\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\                 
+% 6 &      clnifarsec\_KNN &    0 &  0 & \quart{0}{0}{0}{100} \\             
+% 6 &      clnifarsec\_RF &    0 &  0 & \quart{0}{0}{0}{100} \\              
+% 6 &      clni\_MP &    0 &  0 & \quart{0}{0}{0}{100} \\                    
+% 6 &      farsectwo\_KNN &    6 &  0 & \quart{6}{0}{6}{100} \\              
+% 6 &      clnifarsectwo\_KNN &    6 &  0 & \quart{6}{0}{6}{100} \\          
+% 6 &      farsectwo\_LR &    6 &  0 & \quart{6}{0}{6}{100} \\               
+% 6 &      farsectwo\_RF &    6 &  0 & \quart{6}{0}{6}{100} \\               
+% 6 &      clnifarsectwo\_LR &    6 &  0 & \quart{6}{0}{6}{100} \\           
+% 6 &      clnifarsecsq\_KNN &    6 &  0 & \quart{6}{0}{6}{100} \\           
+% 6 &      farsecsq\_KNN &    6 &  0 & \quart{6}{0}{6}{100} \\               
+% 6 &      clnifarsectwo\_RF &    6 &  6 & \quart{0}{6}{6}{100} \\           
+%     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %   1 & clnifarsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   1 &     farsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   2 &    farsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 & clnifarsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &       farsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &   clnifarsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   3 &         clni &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %   3 &        train &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   1 & farsectwo\_RF\_DE &    0.77  &  0.0 & \quart{79}{0}{79}{109} \\
+% %   2 &    farsectwo &    0.56  &  0.42 & \quart{0}{53}{53}{109} \\
+% %   2 & clnifarsectwo &    0.56  &  0.0 & \quart{53}{0}{53}{109} \\
+% %   3 &         clni &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 & clnifarsecsq &    0.14  &  0.14 & \quart{0}{17}{0}{109} \\
+% %   3 &        train &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 &     farsecsq &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %   3 &       farsec &    0.28  &  0.0 & \quart{17}{0}{17}{109} \\
+% %   3 &   clnifarsec &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %   1 &       farsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\
+% %   1 &   clnifarsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\ 
+% %   2 &         clni &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &        train &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &     farsecsq &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   3 & clnifarsecsq &    0.11  &  0.0 & \quart{24}{0}{24}{469} \\
+% %   4 &    farsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %   4 & clnifarsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %   1 & farsectwo\_RF\_DE &    0.68  &  0.0 & \quart{79}{0}{79}{132} \\
+% %   2 & clnifarsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   2 &     farsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   3 &       farsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   3 &   clnifarsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   4 &        train &    0.45  &  0.0 & \quart{42}{0}{42}{132} \\
+% %   5 & clnifarsectwo &    0.38  &  0.05 & \quart{22}{9}{31}{132} \\
+% %   5 &    farsectwo &    0.43  &  0.05 & \quart{34}{8}{39}{132} \\
+% %   6 &         clni &    0.21  &  0.05 & \quart{0}{8}{3}{132} \\
+
+
+
+%  %%% ----END HERE---------------------------------
+%   \end{tabular}} \end{minipage}}\hspace{12mm}
+% \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% % \begin{center}b. TPP results wit FARSEC and CLNI filtering\end{center}
+
+% % \noindent \begin{tabular}{llrrc}
+% %   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% %   \nm{Chromium}\\
+% %  \rowcolor{gray!20}   1* &      train &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %  \rowcolor{gray!20}   1* &      train\_DE &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq\_DE &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo\_DE &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec\_DE &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni\_DE &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq\_DE &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %     1 &      train &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec &    178 &  122 & \ofr \\
+% %     1 &      train\_DE &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq\_DE &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo\_DE &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq\_DE &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo\_DE &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec\_DE &    178 &  122 & \ofr \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   \rowcolor{gray!20}   1* &      train &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %   \rowcolor{gray!20}   1* &      train\_DE &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq\_DE &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo\_DE &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec\_DE &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni\_DE &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq\_DE &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %     \rowcolor{gray!20}   1* &      train &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq\_DE &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo\_DE &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec\_DE &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni\_DE &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq\_DE &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo\_DE &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec\_DE &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %     \rowcolor{gray!20}   1* &      train &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec &    99 &  444 & \ofr \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq\_DE &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo\_DE &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec\_DE &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni\_DE &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq\_DE &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo\_DE &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec\_DE &    99 &  444 & \ofr \\
+
+% %   %%% ----END HERE----------------------------------
+   
+   
+% %   \end{tabular}
+%   }
+
+% \end{minipage}
+% }
+%  \caption{
+% \%  WPP and TPP precision results of using default hyperparameter in scikit-learn and tuning using differential evolutionary (DE) algorithm
+%   }
+%  \label{fig:jur}
+% \end{figure*}
+
+
+
+% \begin{figure*}
+% \renewcommand{\baselinestretch}{0.65} 
+%  \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% \vspace{2.5mm}
+% \begin{center}a. The recall results of project Derby with FARSEC and CLNI filtering\end{center}
+% \noindent \begin{tabular}{llrrc}
+%   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% 1 &      farsecsq\_MP &    95 &  3 & \quart{95}{3}{95}{100} \\
+%     1 &      clnifarsecsq\_NB &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_KNN\_DE3 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      farsecsq\_MP\_DE3 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      farsecsq\_MP\_DE20 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      farsecsq\_NB &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      farsecsq\_RF\_DE20 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      farsecsq\_RF\_DE10 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_RF\_DE20 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsedsq\_MP\_DE10 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_MP\_DE20 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      farsecsq\_RF\_DE3 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_RF\_DE3 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_RF\_DE10 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_LR &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_KNN\_DE10 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_MP &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_MP\_DE3 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      farsecsq\_MP\_DE10 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     1 &      clnifarsecsq\_KNN\_DE20 &    100 &  0 & \quart{100}{0}{100}{100} \\
+%     2 &      farsectwo\_MP\_DE20 &    81 &  0 & \quart{81}{0}{81}{100} \\
+%     2 &      clnifarsectwo\_NB &    81 &  0 & \quart{81}{0}{81}{100} \\
+%     2 &      clnifarsectwo\_MP\_DE3 &    81 &  2 & \quart{81}{2}{81}{100} \\
+%     2 &      farsectwo\_NB &    81 &  0 & \quart{81}{0}{81}{100} \\
+%     2 &      clnifarsectwo\_MP\_DE10 &    81 &  5 & \quart{81}{5}{81}{100} \\
+%     2 &      clnifarsectwo\_MP\_DE20 &    81 &  5 & \quart{81}{5}{81}{100} \\
+%     2 &      farsectwo\_MP\_DE10 &    86 &  5 & \quart{81}{5}{86}{100} \\
+%     3 &      farsecsq\_RF &    62 &  4 & \quart{60}{4}{62}{100} \\
+%     3 &      clnifarsecsq\_RF &    67 &  4 & \quart{67}{4}{67}{100} \\
+%     3 &      farsectwo\_MP\_DE3 &    69 &  4 & \quart{67}{4}{69}{100} \\
+%     3 &      farsecsq\_LR &    71 &  0 & \quart{71}{0}{71}{100} \\
+%     4 &      clnifarsecsq\_KNN &    60 &  0 & \quart{60}{0}{60}{100} \\
+%     4 &      farsecsq\_KNN\_DE3 &    60 &  0 & \quart{60}{0}{60}{100} \\
+%     4 &      clnifarsectwo\_LR &    60 &  0 & \quart{60}{0}{60}{100} \\
+%     4 &      farsecsq\_KNN\_DE10 &    60 &  0 & \quart{60}{0}{60}{100} \\
+%     4 &      farsecsq\_KNN\_DE20 &    60 &  0 & \quart{60}{0}{60}{100} \\
+%     4 &      farsecsq\_KNN &    60 &  0 & \quart{60}{0}{60}{100} \\
+%     4 &      farsectwo\_LR &    60 &  0 & \quart{60}{0}{60}{100} \\
+%     5 &      clnifarsectwo\_RF\_DE20 &    56 &  1 & \quart{55}{1}{56}{100} \\
+%     6 &      farsectwo\_RF\_DE10 &    52 &  0 & \quart{52}{0}{52}{100} \\
+%     6 &      farsectwo\_RF\_DE20 &    55 &  3 & \quart{52}{3}{55}{100} \\
+%     6 &      clnifarsectwo\_RF\_DE10 &    55 &  0 & \quart{55}{0}{55}{100} \\
+%     7 &      farsectwo\_RF\_DE3 &    50 &  2 & \quart{50}{2}{50}{100} \\
+%     7 &      clnifarsectwo\_RF\_DE3 &    50 &  0 & \quart{50}{0}{50}{100} \\
+%     8 &      clnifarsec\_NB &    48 &  0 & \quart{48}{0}{48}{100} \\
+%     8 &      farsec\_NB &    48 &  0 & \quart{48}{0}{48}{100} \\
+%     9 &      train\_NB &    45 &  0 & \quart{45}{0}{45}{100} \\
+%     9 &      clni\_NB &    45 &  0 & \quart{45}{0}{45}{100} \\
+%     10 &      clnifarsec\_MP\_DE20 &    38 &  2 & \quart{38}{2}{38}{100} \\
+%     10 &      farsec\_MP\_DE20 &    40 &  7 & \quart{38}{7}{40}{100} \\
+%     10 &      farsectwo\_MP &    40 &  3 & \quart{40}{3}{40}{100} \\
+%     10 &      clnifarsectwo\_MP &    43 &  5 & \quart{43}{5}{43}{100} \\
+%     10 &      clnifarsectwo\_RF &    43 &  7 & \quart{36}{7}{43}{100} \\
+%     11 &      clni\_MP\_DE20 &    36 &  0 & \quart{36}{0}{36}{100} \\
+%     11 &      clnifarsec\_RF\_DE20 &    36 &  0 & \quart{36}{0}{36}{100} \\
+%     11 &      farsectwo\_RF &    36 &  4 & \quart{36}{4}{36}{100} \\
+%     11 &      clnifarsec\_MP\_DE10 &    36 &  7 & \quart{31}{7}{36}{100} \\
+%     12 &      clni\_RF\_DE10 &    33 &  0 & \quart{33}{0}{33}{100} \\
+%     12 &      farsec\_RF\_DE10 &    33 &  0 & \quart{33}{0}{33}{100} \\
+%     12 &      train\_MP\_DE10 &    33 &  2 & \quart{31}{2}{33}{100} \\
+%     12 &      train\_MP\_DE20 &    33 &  2 & \quart{31}{2}{33}{100} \\
+%     12 &      farsec\_MP\_DE10 &    33 &  2 & \quart{31}{2}{33}{100} \\
+%     12 &      clni\_RF\_DE20 &    33 &  0 & \quart{33}{0}{33}{100} \\
+%     12 &      clnifarsec\_RF\_DE10 &    33 &  3 & \quart{33}{3}{33}{100} \\
+%     12 &      clnifarsec\_RF\_DE3 &    33 &  0 & \quart{33}{0}{33}{100} \\
+%     12 &      farsec\_RF\_DE20 &    33 &  3 & \quart{33}{3}{33}{100} \\
+%     13 &      clni\_MP\_DE10 &    31 &  7 & \quart{28}{7}{31}{100} \\
+%     13 &      clnifarsec\_MP &    31 &  2 & \quart{28}{2}{31}{100} \\
+%     13 &      clnifarsec\_MP\_DE3 &    31 &  2 & \quart{28}{2}{31}{100} \\
+%     13 &      train\_RF\_DE20 &    31 &  0 & \quart{31}{0}{31}{100} \\
+%     13 &      clnifarsec\_LR &    31 &  0 & \quart{31}{0}{31}{100} \\
+%     13 &      train\_RF\_DE10 &    31 &  2 & \quart{28}{2}{31}{100} \\
+%     13 &      clni\_RF\_DE3 &    31 &  0 & \quart{31}{0}{31}{100} \\
+%     13 &      farsec\_RF\_DE3 &    31 &  2 & \quart{31}{2}{31}{100} \\
+%     14 &      farsec\_MP\_DE3 &    28 &  5 & \quart{26}{5}{28}{100} \\
+%     14 &      train\_RF\_DE3 &    28 &  2 & \quart{26}{2}{28}{100} \\
+%     14 &      farsec\_LR &    28 &  0 & \quart{28}{0}{28}{100} \\
+%     14 &      clni\_MP\_DE3 &    28 &  2 & \quart{26}{2}{28}{100} \\
+%     15 &      clnifarsectwo\_KNN\_DE20 &    26 &  0 & \quart{26}{0}{26}{100} \\
+%     15 &      clnifarsectwo\_KNN\_DE3 &    26 &  0 & \quart{26}{0}{26}{100} \\
+%     15 &      clnifarsectwo\_KNN &    26 &  0 & \quart{26}{0}{26}{100} \\
+%     15 &      clnifarsectwo\_KNN\_DE10 &    26 &  0 & \quart{26}{0}{26}{100} \\
+%     16 &      clni\_LR &    24 &  0 & \quart{24}{0}{24}{100} \\
+%     16 &      train\_MP\_DE3 &    24 &  2 & \quart{24}{2}{24}{100} \\
+%     16 &      clnifarsec\_RF &    24 &  5 & \quart{21}{5}{24}{100} \\
+%     16 &      train\_LR &    24 &  0 & \quart{24}{0}{24}{100} \\
+%     17 &      train\_MP &    21 &  2 & \quart{19}{2}{21}{100} \\
+%     17 &      farsectwo\_KNN &    21 &  0 & \quart{21}{0}{21}{100} \\
+%     17 &      clni\_MP &    21 &  4 & \quart{17}{4}{21}{100} \\
+%     17 &      farsectwo\_KNN\_DE3 &    21 &  0 & \quart{21}{0}{21}{100} \\
+%     17 &      clni\_RF &    21 &  0 & \quart{21}{0}{21}{100} \\
+%     17 &      farsectwo\_KNN\_DE10 &    21 &  0 & \quart{21}{0}{21}{100} \\
+%     17 &      farsectwo\_KNN\_DE20 &    21 &  0 & \quart{21}{0}{21}{100} \\
+%     17 &      farsec\_MP &    21 &  5 & \quart{19}{5}{21}{100} \\
+%     18 &      clnifarsec\_KNN\_DE20 &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      clni\_KNN &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      farsec\_RF &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      clni\_KNN\_DE10 &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      train\_RF &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      clni\_KNN\_DE3 &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      clnifarsec\_KNN\_DE3 &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      clni\_KNN\_DE20 &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      clnifarsec\_KNN\_DE10 &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     18 &      clnifarsec\_KNN &    19 &  0 & \quart{19}{0}{19}{100} \\
+%     19 &      train\_KNN &    12 &  2 & \quart{12}{2}{12}{100} \\
+%     19 &      train\_KNN\_DE3 &    12 &  2 & \quart{12}{2}{12}{100} \\
+%     19 &      farsec\_KNN\_DE20 &    14 &  2 & \quart{12}{2}{14}{100} \\
+%     19 &      farsec\_KNN &    14 &  2 & \quart{12}{2}{14}{100} \\
+%     19 &      farsec\_KNN\_DE3 &    14 &  2 & \quart{12}{2}{14}{100} \\
+%     19 &      train\_KNN\_DE20 &    14 &  2 & \quart{12}{2}{14}{100} \\
+%     19 &      train\_KNN\_DE10 &    14 &  2 & \quart{12}{2}{14}{100} \\
+%     19 &      farsec\_KNN\_DE10 &    14 &  0 & \quart{14}{0}{14}{100} \\
+%     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %   1 & clnifarsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   1 &     farsecsq &    0.83  &  0.0 & \quart{79}{0}{79}{96} \\
+% %   2 &    farsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 & clnifarsectwo &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &       farsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   2 &   clnifarsec &    0.67  &  0.0 & \quart{64}{0}{64}{96} \\
+% %   3 &         clni &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %   3 &        train &    0.0  &  0.0 & \quart{0}{0}{0}{96} \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   1 & farsectwo\_RF\_DE &    0.77  &  0.0 & \quart{79}{0}{79}{109} \\
+% %   2 &    farsectwo &    0.56  &  0.42 & \quart{0}{53}{53}{109} \\
+% %   2 & clnifarsectwo &    0.56  &  0.0 & \quart{53}{0}{53}{109} \\
+% %   3 &         clni &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 & clnifarsecsq &    0.14  &  0.14 & \quart{0}{17}{0}{109} \\
+% %   3 &        train &    0.14  &  0.0 & \quart{0}{0}{0}{109} \\
+% %   3 &     farsecsq &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %   3 &       farsec &    0.28  &  0.0 & \quart{17}{0}{17}{109} \\
+% %   3 &   clnifarsec &    0.28  &  0.14 & \quart{0}{17}{17}{109} \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %   1 &       farsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\
+% %   1 &   clnifarsec &    0.22  &  0.0 & \quart{79}{0}{79}{469} \\ 
+% %   2 &         clni &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &        train &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   2 &     farsecsq &    0.17  &  0.0 & \quart{54}{0}{54}{469} \\
+% %   3 & clnifarsecsq &    0.11  &  0.0 & \quart{24}{0}{24}{469} \\
+% %   4 &    farsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %   4 & clnifarsectwo &    0.06  &  0.0 & \quart{0}{0}{0}{469} \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %   1 & farsectwo\_RF\_DE &    0.68  &  0.0 & \quart{79}{0}{79}{132} \\
+% %   2 & clnifarsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   2 &     farsecsq &    0.6  &  0.0 & \quart{66}{0}{66}{132} \\
+% %   3 &       farsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   3 &   clnifarsec &    0.48  &  0.0 & \quart{47}{0}{47}{132} \\
+% %   4 &        train &    0.45  &  0.0 & \quart{42}{0}{42}{132} \\
+% %   5 & clnifarsectwo &    0.38  &  0.05 & \quart{22}{9}{31}{132} \\
+% %   5 &    farsectwo &    0.43  &  0.05 & \quart{34}{8}{39}{132} \\
+% %   6 &         clni &    0.21  &  0.05 & \quart{0}{8}{3}{132} \\
+
+
+
+%  %%% ----END HERE---------------------------------
+%   \end{tabular}} \end{minipage}}\hspace{12mm}
+% \resizebox{0.45\textwidth}{!}{\begin{minipage}{4in}
+% {\small
+% % \begin{center}b. TPP results wit FARSEC and CLNI filtering\end{center}
+
+% % \noindent \begin{tabular}{llrrc}
+% %   {\textbf{Rank}}& \textbf{Using} & \textbf{Med.} & \textbf{IQR} & \\\hline
+  
+% %   \nm{Chromium}\\
+% %  \rowcolor{gray!20}   1* &      train &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %  \rowcolor{gray!20}   1* &      train\_DE &    8 &  1 & \quart{7}{1}{8}{100} \\
+% %  \rowcolor{gray!20}   1* &      farsecsq\_DE &    9 &  2 & \quart{8}{2}{9}{100} \\ 
+% %     2 &     farsectwo\_DE &    15 &  2 & \quart{14}{2}{15}{100} \\
+% %     3 &     farsec\_DE &    33 &  12 & \quart{26}{12}{33}{100} \\
+% %     4 &     clni\_DE &    40 &  10 & \quart{37}{10}{40}{100} \\ 
+% %     5 &     clnifarsecsq\_DE &    54 &  10 & \quart{47}{10}{54}{100} \\ 
+% %     6 &     clnifarsectwo\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     6 &     clnifarsec\_DE &    69 &  18 & \quart{69}{18}{76}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% %   %%% generating from latex_plotting.py::plot_mre_for_all
+% % \nm{Wicket}\\
+% %     1 &      train &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec &    178 &  122 & \ofr \\
+% %     1 &      train\_DE &    48 &  29 & \quart{36}{29}{48}{100} \\
+% %     1 &      farsecsq\_DE &    48 &  20 & \quart{40}{20}{48}{100} \\
+% %     1 &      farsectwo\_DE &    51 &  30 & \quart{36}{30}{51}{100} \\
+% %     2 &      farsec\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clni\_DE &    56 &  23 & \quart{48}{23}{56}{100} \\
+% %     2 &      clnifarsecsq\_DE &    59 &  21 & \quart{48}{21}{59}{100} \\
+% %     4 &      clnifarsectwo\_DE &    178 &  122 & \ofr \\
+% %     4 &      clnifarsec\_DE &    178 &  122 & \ofr \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Ambari}\\
+% %   \rowcolor{gray!20}   1* &      train &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %   \rowcolor{gray!20}   1* &      train\_DE &    39 &  19 & \quart{31}{19}{39}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsecsq\_DE &    41 &  19 & \quart{31}{19}{41}{100} \\
+% %   \rowcolor{gray!20}   1* &      farsectwo\_DE &    43 &  18 & \quart{33}{18}{43}{100} \\
+% %     2 &      farsec\_DE &    45 &  18 & \quart{37}{18}{46}{100} \\
+% %     2 &      clni\_DE &    46 &  18 & \quart{37}{18}{46}{100} \\
+% %     3 &      clnifarsecsq\_DE &    51 &  17 & \quart{46}{17}{51}{100} \\
+% %     3 &      clnifarsectwo\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     3 &      clnifarsec\_DE &    56 &  33 & \quart{38}{33}{56}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Camel}\\
+% %     \rowcolor{gray!20}   1* &      train &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    14 &  12 & \quart{8}{12}{14}{100} \\
+% %     2 &      farsecsq\_DE &    23 &  18 & \quart{15}{18}{23}{100} \\
+% %     2 &      tarsectwo\_DE &    24 &  16 & \quart{16}{16}{24}{100} \\
+% %     2 &      farsec\_DE &    30 &  11 & \quart{24}{11}{30}{100} \\
+% %     2 &      clni\_DE &    32 &  16 & \quart{25}{16}{32}{100} \\
+% %     3 &      clnifarsecsq\_DE &    43 &  26 & \quart{34}{26}{43}{100} \\
+% %     4 &      clnifarsectwo\_DE &    53 &  32 & \quart{49}{32}{53}{100} \\
+% %     6 &      clnifarsec\_DE &    87 &  72 & \quart{49}{57}{87}{100} \\
+% %     \\
+% %     \\
+% %     \hline
+% % \nm{Derby}\\
+% %     \rowcolor{gray!20}   1* &      train &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec &    99 &  444 & \ofr \\
+% %     \rowcolor{gray!20}   1* &      train\_DE &    36 &  21 & \quart{31}{21}{33}{100} \\
+% %     2 &      farsecsq\_DE &    46 &  15 & \quart{31}{15}{43}{100} \\
+% %     2 &      farsectwo\_DE &    54 &  22 & \quart{41}{22}{54}{100} \\
+% %     2 &      farsec\_DE &    55 &  38 & \quart{32}{38}{55}{100} \\
+% %     3 &      clni\_DE &    61 &  21 & \quart{49}{21}{61}{100} \\
+% %     3 &      clnifarsecsq\_DE &    61 &  20 & \quart{52}{20}{61}{100} \\
+% %     3 &      clnifarsectwo\_DE &    62 &  15 & \quart{54}{15}{62}{100} \\
+% %     4 &      clnifarsec\_DE &    99 &  444 & \ofr \\
+
+% %   %%% ----END HERE----------------------------------
+   
+   
+% %   \end{tabular}
+%   }
+
+% \end{minipage}
+% }
+%  \caption{
+% \%  WPP and TPP precision results of using default hyperparameter in scikit-learn and tuning using differential evolutionary (DE) algorithm
+%   }
+%  \label{fig:jur}
+% \end{figure*}
