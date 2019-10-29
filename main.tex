@@ -1,4 +1,4 @@
-\documentclass[10pt,conference]{IEEEtran} 
+\documentclass[10pt,conference,review]{IEEEtran}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 % \usepackage{cite}
@@ -69,6 +69,7 @@
 \newcommand{\tion}[1]{\S\ref{tion:#1}}
 \usepackage{amsmath}
 \usepackage{subfigure}
+\usepackage{tablefootnote}
 
 % \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usepackage{url}
@@ -173,33 +174,15 @@ shadow=false
     
 \begin{document}
 
-\title{Software Engineering for Fairness: A Case Study with Hyperparameter Optimization}
+\title{Software Engineering for Fairness: \\A Case Study with Hyperparameter Optimization}
 
-\author{\IEEEauthorblockN{Blind for review}}
+\author{\IEEEauthorblockN{Blinded for review}}
 
-% \author{\IEEEauthorblockN{Joymallya Chakraborty}
-% \IEEEauthorblockA{Computer Science \\
-% North Carolina State University\\
-% Raleigh, USA \\
-% jchakra@ncsu.edu}
-% \and
-% \IEEEauthorblockN{Tianpei Xia}
-% \IEEEauthorblockA{Computer Science \\
-% North Carolina State University\\
-% Raleigh, USA \\
-% txia4@ncsu.edu}
-% \and
-% \IEEEauthorblockN{Fahmid M. Fahid}
-% \IEEEauthorblockA{Computer Science \\
-% North Carolina State University\\
-% Raleigh, USA \\
-% ffahid@ncsu.edu}
-% \and
-% \IEEEauthorblockN{Tim Menzies}
-% \IEEEauthorblockA{Computer Science \\
-% North Carolina State University\\
-% Raleigh, USA \\
-% timm@ieee.org}}
+\author{\IEEEauthorblockN{Joymallya Chakraborty, Tianpei Xia, Fahmid M. Fahid, Tim Menzies}
+\IEEEauthorblockA{jchakra@ncsu.edu,txia4@ncsu.edu,ffahid@ncsu.edu,timm@ieee.org\\
+North Carolina State University\\}}
+
+
 
 
 \maketitle
@@ -207,11 +190,19 @@ shadow=false
 \pagestyle{plain}
 
 \begin{abstract}
-Machine learning software is increasingly being used to make decisions that affect people's lives.  Potentially,  the application of that software will result in fairer decisions because (unlike humans) machine learning software is not biased. However, recent results show that the software within many data mining packages exhibits ``Group discrimination'' ; i.e. their decisions are  inappropriately affected by   “protected attributes” (e.g., race, gender, age, etc.). We assert that it is the ethical duty of software engineers to strive to reduce such discrimination.  This paper discusses how that might be done.  There has been much prior work  on validating the fairness of machine-learning models (by recognizing when such software discrimination exists). But after detection, comes mitigation. What steps can ethical software engineers take to reduce discrimination in the software they produce?  This paper shows that making \textit{fairness} as a goal during hyperparamter optimization can (a) preserve the predictive power of a model learned from a data miner while also (b) generates fairer results. To the best of  our knowledge, this is the first application  of hyperparameter optimization as a tool for software engineers to generate fairer software.
+We assert that it is the ethical duty of software engineers to strive to reduce software discrimination.  This paper discusses how that might be done.
+
+This is an important topic since
+machine learning software is increasingly being used to make decisions that affect people's lives.  Potentially,  the application of that software will result in fairer decisions because (unlike humans) machine learning software is not biased. However, recent results show that the software within many data mining packages exhibit ``group discrimination''; i.e. their decisions are  inappropriately affected by   “protected attributes” (e.g., race, gender, age, etc.).
+
+There has been much prior work  on validating the fairness of machine-learning models (by recognizing when such software discrimination exists). But after detection, comes mitigation. What steps can ethical software engineers take to reduce discrimination in the software they produce?  
+
+This paper shows that making \textit{fairness} as a goal during hyperparamter optimization can (a) preserve the predictive power of a model learned from a data miner while also (b) generates fairer results. To the best of  our knowledge, this is the first application  of hyperparameter optimization as a tool for software engineers to generate fairer software.
+
 \end{abstract}
 
 \begin{IEEEkeywords}
-Algorithmic bias, Parameter Optimization
+Algorithmic bias, fairness,  optimization
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -220,35 +211,57 @@ Many high-stake applications such as finance, hiring, admissions, criminal justi
 
 Machine learning software, by its nature, is always a form of statistical discrimination. The discrimination becomes objectionable when it places certain privileged groups at systematic advantage and certain unprivileged groups at systematic disadvantage. In certain situations, such as employment (hiring and firing), discrimination is not only objectionable, but illegal.
 
-% Recent years have seen an outpouring of research on fairness and bias in the models generated by machine learning software.  Narayanan \cite{Narayan_21} described at least 21 mathematical definitions of fairness in the literature. These are not just theoretical differences in how to measure fairness; different definitions produce entirely different outcomes. For example, ProPublica (an investigative news organization) and Northpointe (a company that creates case management software for the judicial system) had a public debate on an important social justice issue (recidivism prediction) that was fundamentally about what is the right fairness metric \cite{Com_pas,Prob_bias,Comp_reci}. Also, researchers have shown that it is impossible to satisfy all definitions of fairness at the same time \cite{Kleinberg:2018:ITA:3219617.3219634}. Further, in the SE literature, there is much interest in issues of fairness and testing. Thus, although fairness research is a very active field, clarity on which bias metrics and bias mitigation strategies are best is yet to be achieved. 
 
-Issues of \textit{fairness} have been explored in many  recent papers in the SE research literature. Angell et al. \cite{Angell:2018:TAT:3236024.3264590}  commented that issues of fairness are analogous to other measures of software quality. Galhotra and his colleagues discussed how to efficiently generate test cases to test for discrimination\cite{Galhotra_2017}. Udeshi et al. \cite{Udeshi_2018} worked on generating discriminatory  inputs for machine learning software. Albarghouthi et al. \cite{Albarghouthi:2019:FP:3287560.3287588} explored if fairness can be wired into annotations within a program while Tramer et al. proposed different ways to measure discrimination \cite{Tramer_2017}. So, software fairness has become a matter of concern. But there is no research work done in SE domain to achieve fairness. This is the first work in SE domain which tries to make a machine learning model unbiased.
+Issues of \textit{fairness} have been explored in many  recent papers in the SE research literature. Angell et al. \cite{Angell:2018:TAT:3236024.3264590}  commented that issues of fairness are analogous to other measures of software quality. Galhotra and his colleagues discussed how to efficiently generate test cases to test for discrimination\cite{Galhotra_2017}. Udeshi et al. \cite{Udeshi_2018} worked on generating discriminatory  inputs for machine learning software. Albarghouthi et al. \cite{Albarghouthi:2019:FP:3287560.3287588} explored if fairness can be wired into annotations within a program while Tramer et al. proposed different ways to measure discrimination \cite{Tramer_2017}.
 
- The quality of a machine learning model is judged by the performance of prediction. Normally, models are optimized to improve the predictive power. Even if a model can predict well, but outcomes are biased - it becomes a matter of serious concern. So, we propose that every machine learning model must go through fairness testing phase before it is applied. If bias is found, then model needs to be optimized. Hence, we have converted ``dicrmination problem'' into an optimization problem. We think that if \textit{fairness} becomes a goal while learning, then the  models created in that way will generate fairer results. In this study, we investigated whether model parameter tuning can help us to make the model fair or not. 
+All the above SE research detects unfairness. Our work takes a step further and asks how to mitigate
+unfairness. We propose that every machine learning model must go through fairness testing phase before it is applied. If bias is found, then the model needs to be optimized. Hence, we have converted ``discrimination problem'' into an optimization problem. We think that if \textit{fairness} becomes a goal while learning, then the  models created in that way will generate fairer results. In this study, we investigated whether model parameter tuning can help us to make the model fair or not. 
  
- In machine learning, model parameters are the properties of training data that will learn on its own during training by the models, like `splitter' in CART~\cite{breiman2017classification}. These parameters are called \textit{Hyperparameters}. They are very important because they directly control the behaviors of the training algorithm and impact the performance of model. Therefore, selection of appropriate parameters plays a critical role in the performance of machine learning models. Our study applies \textit{hyperparameter optimization} to make a model fair without loosing predictive power. So, it becomes \textit{multiobjective optimization} problem as we are dealing with more than one objective. 
+ In machine learning, many  {\em hyperparameters} control   inductive process ; e.g. the   `splitter' of CART~\cite{breiman2017classification}.  They are very important because they directly control the behaviors of the training algorithm and impact the performance of the model. Therefore, the selection of appropriate parameters plays a critical role in the performance of machine learning models. Our study applies \textit{hyperparameter optimization} to make a model fair without losing predictive power. So, it becomes \textit{multiobjective optimization} problem as we are dealing with more than one objective. 
  
- For fairness, we have chosen two metrics - \textit{Equal opportunity difference, Average odds difference}. For performance, we have chosen two traditional metrics - \textit{recall} and \textit{false alarm}. Recall is higher the better(max=1), other three goals are lower the better(min=0).
+%  For fairness, we have chosen two metrics - \textit{Equal opportunity difference, Average odds difference}. For performance, we have chosen two traditional metrics - \textit{recall} and \textit{false alarm}. Recall is higher the better(max=1), other three goals are lower the better(min=0).
 
+\section{But is this a Problem for Software Engineers?} 
+We are not the only ones to assert that software fairness is a concern that must be addressed 
+by software engineers. Other SE researchers are also exploring this issues \cite{Angell:2018:TAT:3236024.3264590,Brun:2018:SF:3236024.3264838,Aydemir:2018:RES:3194770.3194778}. For example,   IEEE/ACM 
+recently organized a workshop on software fairness called \textit{Fairware 2018}\footnote{http://fairware.cs.umass.edu/}.
+
+Nevertheless,   when discussing this work with colleagues, we are still sometimes
+asked if this problem {\em should}
+or {\em can} be solved by 
+software engineers. We reply that:
+\bi
+\item
+It {\em should} be the goal of  software developers to ensure
+that software conforms to  its
+required ethical standards.
+\item
+Even if we think that  fairness is not our
+problem, our users may disagree.
+When users discover problems with software, it is the job of
+the person maintaining that software (i.e.  a software engineer) to fix that problem.
+\item
+Further, we also think that this problem {\em can} be solved by software engineers. Hyperparameter optimization is now a standard tool
+in software analytics~\cite{xia2018hyperparameter,osman2017hyperparameter}. What we are arguing here is that now that those same tools, that  have been matured within the SE community (by SE researchers and practitioners),
+can now be applied to other problems (e.g.  as discussed in this paper, how to  mitigate unfair software).
+\ei
+ 
 
 \section{Terminology}
 
-In this section, we define specialized terminology from the field of fairness in machine learning. A label is called \textit{favorable label} if its  value corresponds to an outcome that gives an advantage to the receiver. Examples like - being hired for a job, receiving a loan. A \textit{protected attribute} is an attribute that divides a population into two groups that have difference in terms of benefit received. Examples like sex, race. These attributes are not universal, but are specific to application. \textit{Group fairness} is the goal that based on the protected attribute, privileged and unprivileged groups will be treated similarly. \textit{Individual fairness} is the goal of similar individuals will receive similar outcomes.  Our paper studies Group fairness only.
+We say that a label is called \textit{favorable label} if its  value corresponds to an outcome that gives an advantage to the receiver. Examples like - being hired for a job, receiving a loan. \textit{Protected attribute} is an attribute that divides a population into two groups that have difference in terms of benefit received. Like - sex, race. These attributes are not universal, but are specific to application. \textit{Group fairness} is the goal that based on the protected attribute, privileged and unprivileged groups will be treated similarly. \textit{Individual fairness} is the goal of similar individuals will receive similar outcomes.  Our paper studies Group fairness only.
 By definition, ``Bias is a systematic error '' \cite{bias_systemetic}. Our main concern is unwanted bias that puts privileged groups at a systematic advantage and unprivileged groups at a systematic disadvantage. A \textit{fairness metric} is a quantification of unwanted bias in models or training data \cite{IBM}. We used two such fairness metrics in our experiment-
 
 \bi
-% \item \textbf{Statistical Parity Difference}: This is the difference in the probability of favorable outcomes between the unprivileged and privileged groups. This can be computed both from the input dataset as well as from the dataset output from a classifier (predicted dataset). A value of 0 implies both groups have equal benefit, a value less than 0 implies higher benefit for the privileged group, and a value
-% greater than 0 implies higher benefit for the unprivileged group.
-% \item \textbf{Disparate Impact}: This is the ratio in the probability of favorable outcomes between the unprivileged and privileged groups. This can be computed both from the input dataset as well as from the dataset output from a classifier (predicted dataset). A value of 1 implies both groups have equal benefit, a value less than 1 implies higher benefit for the privileged group, and a value greater than 1 implies higher benefit for the unprivileged group.
-\item \textbf{Equal Opportunity Difference(EOD)}: The difference in true positive rates between unprivileged and privileged groups \cite{IBM}. 
-\item \textbf{Average Odds Difference(AOD)}: The average of difference in false positive rates and true positive rates between privileged and unprivileged groups \cite{IBM}.
+\item \textbf{Equal Opportunity Difference(EOD)}:  Delta in true positive rates in unprivileged and privileged groups \cite{IBM}. 
+\item \textbf{Average Odds Difference(AOD)}: Average delta in false positive rates and true positive rates between privileged and unprivileged groups \cite{IBM}.
 \ei
 Both are computed using the input and output datasets to a classifier. A value of 0 implies that both groups have equal benefit, a value lesser than 0 implies higher benefit for the privileged group and a value greater than 0 implies higher benefit for the unprivileged group. In this study, we have taken absolute value of these metrics. 
 
 \section{Methodology}
 
 \subsection{Hyperparameter Optimization}
- Hyperparameter optimization is the process of searching the most optimal hyperparameters in machine learning learners~\cite{biedenkapp2018hyperparameter}~\cite{franceschi2017forward}. There are four common algorithms: grid search, random search, bayesian optimization and SMBO.
+ Hyperparameter optimization is the process of searching the most optimal hyperparameters in machine learning learners~\cite{biedenkapp2018hyperparameter}~\cite{franceschi2017forward}. There are four common algorithms: grid search, random search, Bayesian optimization and SMBO.
 
 \textit{Grid search}~\cite{bergstra2011algorithms} implements all possible combination of hyperparameters for a learner and tries to find out the best one. It suffers if data have high dimensional space called the ``curse of dimensionality''. It tries all combinations but only a few of the tuning parameters really matter~\cite{bergstra2012random}.
 
@@ -261,185 +274,245 @@ In contrast to Grid or Random search, \textit{Bayesian optimization}~\cite{pelik
 Recent studies have shown that hyperparameter optimization can achieve better performance than using ``off-the-shelf'' configurations in several research areas in software engineering, e.g., software effort estimation\cite{xia2018hyperparameter} and software defect prediction\cite{osman2017hyperparameter}. We are first to apply hyperparameter optimization in software fairness domain.
 
 \subsection{FLASH: A Fast Sequential Model-Based Method}
-Nair et al. \cite{8469102} proposed a fast SMBO approach called FLASH for multiobjective optimization. FLASH's acquisition function uses Maximum Mean. Maximum Mean returns the sample (configuration) with highest expected (performance) measure. FLASH models each objective as a separate performance (CART) model. Because the CART model can be trained for one performance measure or dependent value. Nair reports that FLASH runs orders of magnitude faster than NSGA-II, but that was for software configuration problems. This work is the first study to try using  FLASH to optimize for learner performance while at the same time improving fairness.
+Nair et al. \cite{8469102} proposed a fast SMBO approach called FLASH for multiobjective optimization. FLASH's acquisition function uses Maximum Mean. Maximum Mean returns the sample (configuration) with the highest expected (performance) measure. FLASH models each objective as a separate performance (CART) model. Because the CART model can be trained for one performance measure or dependent value. Nair reports that FLASH runs orders of magnitude faster than NSGA-II, but that was for software configuration problems. This work is the first study to try using  FLASH to optimize for learner performance while at the same time improving fairness.
 
 
-% \begin{algorithm}[h]
-% \small
-% \hspace{0.2cm}\begin{lstlisting}[xrightmargin=5.0ex,mathescape,frame=none]
-% def FLASH(uneval_configs, fitness, size, budget):
-%     # Add |size| number of randomly selected configurations to training data
-%     # All the randomly selected configurations are measured
-%     eval_configs = [measure(x) for x in sample(uneval_configs, size)]
-%     # Remove the evaluations configurations from data
-%     uneval_configs.remove(eval_configs)
-%     # Till all the lives has been lost
-%     while budget > 0:
-%         # build one CART model per objective
-%         for o in objectives: model[o] = CART(eval_configs)
-%         # Find and measure another point based on acquisition function
-%         acquired_point = measure(acquisition_fn(uneval_configs,model))
-%         eval_configs += acquired_point # Add acquired point
-%         uneval_config -= acquired_point # Remove acquired point 
-%         # Stopping criteria
-%         budget -= 1
-%     return best
-        
-        
-% def acquisition_fn(uneval_configs, model, no_directions=10):
-%     # Predict the value of all the unevaluated configurations using model
-%     predicted = model.predict(uneval_configs)
-%     # if number of objectives greater than 1
-%     if len(objectives) > 1: # For multi-objective problems
-%         return Bazza(predicted)
-%     else # For single-objective problems
-%         return max(predicted)
-    
-    
-% \end{lstlisting}
-% \caption{Python code of FLASH From~\cite{8469102}.}\label{algorithm:FLASH}  
-% \end{algorithm}
 
 
 \begin{table}[]
-\tiny
-\caption{The Description of Datasets used in our study}
+\scriptsize
+\caption{The Description of Datasets used in our study, N=\#rows. F=\#features, FAV=favorable.
+``recid''=recidivate}
 \label{tbl:dataset}
-\begin{tabular}{|l|l|l|l|l|l|l|}
+\begin{tabular}{|l@{~}|l@{~}|l@{~}|l@{~}|l@{~}|p{0.7cm}@{~}|p{0.6cm}|}
 \hline
 \rowcolor[HTML]{C0C0C0} 
 \multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Protected Attribute} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Label} \\ \cline{4-7} 
 \rowcolor[HTML]{C0C0C0} 
-\multicolumn{1}{|c|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Size}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Features}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Privileged} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Unprivileged} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Favorable} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Unfavorable} \\ \hline
-\begin{tabular}[c]{@{}l@{}}Adult \\ Census\\ Income\footnote{https://archive.ics.uci.edu/ml/datasets/adult}\end{tabular} & 48,842 & 14 & \begin{tabular}[c]{@{}l@{}}Sex - Male\\ Race - White\end{tabular} & \begin{tabular}[c]{@{}l@{}}Sex - Female\\ Race - Non-\\ white\end{tabular} & \begin{tabular}[c]{@{}l@{}}High \\ Income\end{tabular} & \begin{tabular}[c]{@{}l@{}}Low \\ Income\end{tabular} \\ \hline
-Compas\footnote{https://github.com/propublica/compas-analysis} & 7,214 & 28 & \begin{tabular}[c]{@{}l@{}}Sex - Female\\ Race - Caucasian\end{tabular} & \begin{tabular}[c]{@{}l@{}}Sex - Male\\ Race - Not \\ Caucasian\end{tabular} & \begin{tabular}[c]{@{}l@{}}Did \\ recidivate\end{tabular} & \begin{tabular}[c]{@{}l@{}}Did \\ not \\ recidivate\end{tabular} \\ \hline
-\begin{tabular}[c]{@{}l@{}}German\\ Credit \\ Data\footnote{https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)}\end{tabular} & 1000 & 20 & \begin{tabular}[c]{@{}l@{}}Sex - Male\\ Age - Old\end{tabular} & \begin{tabular}[c]{@{}l@{}}Sex - Female\\ Age - Young\end{tabular} & Good Credit & Bad Credit \\ \hline
+\multicolumn{1}{|c|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}N}} & \multicolumn{1}{c|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}F}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Privileged} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Unprivileged} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Fav} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}UnFav} \\ \hline
+\begin{tabular}[c]{@{}l@{}}Adult \\ Census\\ Income\tablefootnote{https://archive.ics.uci.edu/ml/datasets/adult}\end{tabular} & 48,842 & 14 & \begin{tabular}[c]{@{}l@{}}Sex - Male\\ Race - White\end{tabular} & \begin{tabular}[c]{@{}l@{}}Sex - Female\\ Race - Non-\\ white\end{tabular} & \begin{tabular}[c]{@{}l@{}}High \\ Income\end{tabular} & \begin{tabular}[c]{@{}l@{}}Low \\ Income\end{tabular} \\ \hline
+Compas\tablefootnote{https://github.com/propublica/compas-analysis} & 7,214 & 28 & \begin{tabular}[c]{@{}l@{}}Sex - Female\\ Race - Caucasian\end{tabular} & \begin{tabular}[c]{@{}l@{}}Sex - Male\\ Race - Not \\ Caucasian\end{tabular} & \begin{tabular}[c]{@{}l@{}}Did \\ recid\end{tabular} & \begin{tabular}[c]{@{}l@{}}Did \\ not \\ recid\end{tabular} \\ \hline
+\begin{tabular}[c]{@{}l@{}}German\\ Credit \\ Data\tablefootnote{https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data}\end{tabular} & 1,000 & 20 & \begin{tabular}[c]{@{}l@{}}Sex - Male\\ Age - Old\end{tabular} & \begin{tabular}[c]{@{}l@{}}Sex - Female\\ Age - Young\end{tabular} & Good Credit & Bad Credit \\ \hline
 \end{tabular}
+\footnotetext{https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)}
 \end{table}
 
 
+
+ 
 \section{Results}
 
 \newenvironment{RQ}{\vspace{2mm}\begin{tcolorbox}[enhanced,width=3.4in,size=fbox,fontupper=\small,colback=blue!5,drop shadow southwest,sharp corners]}{\end{tcolorbox}}
 
-\begin{RQ}
-{\bf RQ1.} Does optimizing for fairness damage model prediction performance ?
-\end{RQ}
+\subsection{
+RQ1: Does optimizing for fairness damage model prediction performance ?}
 
-We have verified our method along with four other related works to answer this question. Table \ref{tbl:dataset} shows the datasets we used. We randomly divided them into three sets - training (70\%), validation (15\%) and test (15\%). Prior researchers who worked with these datasets have used \textit{Logistic Regression} as classification model \cite{Kamishima,NIPS2017_6988,Hardt}. We also decided to use this learner. Before moving to results, here we briefly describe prior works which we selected for our study. There are mainly three kind of prior works -
+We have verified our method along with four other related works to answer this question. Table \ref{tbl:dataset} shows the datasets we used. We randomly divided them into three sets - training (70\%), validation (15\%) and test (15\%). Prior researchers who worked with these datasets have used \textit{Logistic Regression} as classification model \cite{Kamishima,NIPS2017_6988,Hardt}. We also decided to use this learner. Before moving to results, here we briefly describe prior works which we selected for our study. There are mainly three kinds of prior works -
 
 \bi
-\item \textbf{Pre-processing algorithms}: In this method, data is pre-processed(before classification) in such a way that discrimination is reduced. Kamiran et al. proposed \textit{Reweighing} \cite{Kamiran2012} method that generates weights for the training examples in each (group, label) combination differently to ensure fairness. Later, Calmon et al. proposed \textit{Optimized pre-processing} method \cite{NIPS2017_6988} which learns a probabilistic transformation that edits the labels and features with individual distortion and group fairness.
+\item \textbf{Pre-processing algorithms}: In this method, data is pre-processed(before classification) in such a way that discrimination is reduced. Kamiran et al. proposed \textit{Reweighing} \cite{Kamiran2012} method that generates weights for the training examples in each (group, label) combination differently to ensure fairness. Later, Calmon et al. proposed an \textit{Optimized pre-processing} method \cite{NIPS2017_6988} which learns a probabilistic transformation that edits the labels and features with individual distortion and group fairness.
 
 
-\item \textbf{In-processing algorithms}: This is an optimization approach where dataset is divided into train,validation and test set. After learning from training data, model is optimized on the validation set and finally applied on the test set. Our \textit{Hyperparameter Optimization} using FLASH approach lies into this category. Zhang et al. proposed \textit{Adversarial debiasing}  \cite{Zhang:2018:MUB:3278721.3278779} method which learns a classifier to maximize accuracy and simultaneously reduce an adversary's ability to determine the protected attribute from the predictions. This generates a fair classifier because the predictions cannot carry any group discrimination information that the adversary can exploit.
+\item \textbf{In-processing algorithms}: This is an optimization approach where dataset is divided into train, validation and test set. After learning from training data, model is optimized on the validation set and finally applied on the test set. Our \textit{Hyperparameter Optimization} using FLASH approach lies into this category. Zhang et al. proposed \textit{Adversarial debiasing}  \cite{Zhang:2018:MUB:3278721.3278779} method which learns a classifier to maximize accuracy and simultaneously reduce an adversary's ability to determine the protected attribute from the predictions. This generates a fair classifier because the predictions cannot carry any group discrimination information that the adversary can exploit.
 
 
-\item \textbf{Post-processing algorithms}: Here after classification, the class labels are changed to reduce discrimination. Kamiran et al. proposed \textit{Reject option classification} approach \cite{Kamiran:2018:ERO:3165328.3165686} which gives unfavorable outcomes to privileged groups and favorable outcomes to unprivileged groups within a confidence band around the decision boundary with highest uncertainty.
+\item \textbf{Post-processing algorithms}: Hereafter classification, the class labels are changed to reduce discrimination. Kamiran et al. proposed \textit{Reject option classification} approach \cite{Kamiran:2018:ERO:3165328.3165686} which gives unfavorable outcomes to privileged groups and favorable outcomes to unprivileged groups within a confidence band around the decision boundary with the highest uncertainty.
 
 \ei
 
-
-
 \begin{table}[]
 \centering
-\tiny
-\caption{The change of Recall and False alarm before and after bias mitigation algorithm applied. Gray cells indicate improvement and black cells indicate damage.}
+\scriptsize
+\caption{Optimizing just for fairness.  
+Change in  Recall and False alarm before and after bias mitigation. Gray= improvement; black= damage.}
 \label{tbl:fairness_cost}
 \begin{tabular}{|l|c|c|r|r|r|r|}
 \hline
 \rowcolor[HTML]{C0C0C0} 
-\cellcolor[HTML]{C0C0C0} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Reacll} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}False alarm} \\ \cline{4-7} 
+\cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Recall} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}False alarm} \\ \cline{4-7} 
 \rowcolor[HTML]{C0C0C0} 
-\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Algorithm} & \multicolumn{1}{l|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset}} & \multicolumn{1}{l|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Protected \\ Atrribute\end{tabular}}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}After} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}After} \\ \hline
-\multicolumn{1}{|c|}{} &  & Sex & 0.83 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.83} & 0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.43} \\ \cline{3-7} 
-\multicolumn{1}{|c|}{} & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.83} & 0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.35} \\ \cline{2-7} 
-\multicolumn{1}{|c|}{} &  & Sex & 0.60 & 0.60 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.27} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.29} \\ \cline{3-7} 
-\multicolumn{1}{|c|}{} & \multirow{-2}{*}{Compas} & Race & 0.62 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.61} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.27} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.34} \\ \cline{2-7} 
-\multicolumn{1}{|c|}{} &  & Sex & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.69} & \cellcolor[HTML]{FFFFFF}0.66 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.77} \\ \cline{3-7} 
-\multicolumn{1}{|c|}{\multirow{-6}{*}{Reweighing}} & \multirow{-2}{*}{German} & Age & 0.70 & 0.71 & \cellcolor[HTML]{FFFFFF}0.66 & 0.25 \\ \hline
- &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.76} & \cellcolor[HTML]{FFFFFF}0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.35} \\ \cline{3-7} 
- & \multirow{-2}{*}{Adult} & Race & 0.83 & 0.83 & \cellcolor[HTML]{FFFFFF}0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.37} \\ \cline{2-7} 
- &  & Sex & 0.60 & 0.60 & \cellcolor[HTML]{FFFFFF}0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.29} \\ \cline{3-7} 
- & \multirow{-2}{*}{Compas} & Race & 0.62 & {\color[HTML]{333333} 0.65} & \cellcolor[HTML]{FFFFFF}0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.29} \\ \cline{2-7} 
- &  & Sex & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.69} & \cellcolor[HTML]{FFFFFF}0.66 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.36} \\ \cline{3-7} 
-\multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}Optimized \\ Pre-\\ processing\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.68} & \cellcolor[HTML]{FFFFFF}0.66 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.58} \\ \hline
- &  & Sex & 0.82 & 0.83 & 0.35 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.42} \\ \cline{3-7} 
- & \multirow{-2}{*}{Adult} & Race & 0.82 & 0.82 & 0.35 & 0.35 \\ \cline{2-7} 
- &  & Sex & 0.60 & 0.60 & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.28} \\ \cline{3-7} 
- & \multirow{-2}{*}{Compas} & Race & 0.60 & 0.60 & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.28} \\ \cline{2-7} 
- &  & Sex & 0.70 & 0.75 & 0.66 & \cellcolor[HTML]{C0C0C0}0.61 \\ \cline{3-7} 
-\multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}Adversial\\ Debiasing\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.69} & 0.50 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.72} \\ \hline
- &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.24} & 0.34 & \cellcolor[HTML]{C0C0C0}0.05 \\ \cline{3-7} 
- & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.28} & 0.34 & \cellcolor[HTML]{C0C0C0}0.04 \\ \cline{2-7} 
- &  & Sex & 0.62 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.97} & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.89} \\ \cline{3-7} 
- & \multirow{-2}{*}{Compas} & Race & 0.62 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.68} & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.38} \\ \cline{2-7} 
- &  & Sex & 0.70 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.96} & 0.66 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.95} \\ \cline{3-7} 
-\multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}Reject\\ Option\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.70 & 0.70 & 0.66 & 0.66 \\ \hline
- &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.78} & 0.39 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.40} \\ \cline{3-7} 
- & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.78} & 0.39 & \cellcolor[HTML]{C0C0C0}0.35 \\ \cline{2-7} 
- &  & Sex & 0.65 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.63} & 0.38 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.42} \\ \cline{3-7} 
- & \multirow{-2}{*}{Compas} & Race & 0.65 & 0.65 & 0.38 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.39} \\ \cline{2-7} 
- &  & Sex & 0.74 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.68} & 0.20 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.33} \\ \cline{3-7} 
-\multirow{-6}{*}{FLASH} & \multirow{-2}{*}{German} & Age & 0.74 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.68} & 0.20 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.45} \\ \hline
+\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Algorithm} & \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset} & \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}c@{}}Protected\\ Attribute\end{tabular}} & Before & After & Before & After \\ \hline
+ &  & Sex & 0.38 & \cellcolor[HTML]{C0C0C0}0.43 & 0.06 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.10} \\ \cline{3-7} 
+ & \multirow{-2}{*}{Adult} & Race & 0.38 & \cellcolor[HTML]{C0C0C0}0.39 & 0.06 & 0.06 \\ \cline{2-7} 
+ &  & Sex & 0.52 & \cellcolor[HTML]{C0C0C0}0.53 & 0.19 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.22} \\ \cline{3-7} 
+ & \multirow{-2}{*}{Compas} & Race & 0.52 & \cellcolor[HTML]{C0C0C0}0.57 & 0.19 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.30} \\ \cline{2-7} 
+ &  & Sex & 0.04 & 0.04 & 0.03 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.06} \\ \cline{3-7} 
+\multirow{-6}{*}{Reweighing} & \multirow{-2}{*}{German} & Age & 0.04 & \cellcolor[HTML]{C0C0C0}0.06 & 0.03 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.00} \\ \hline
+ &  & Sex & 0.40 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.32} & 0.06 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.07} \\ \cline{3-7} 
+ & \multirow{-2}{*}{Adult} & Race & 0.40 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.38} & 0.06 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.07} \\ \cline{2-7} 
+ &  & Sex & 0.52 & 0.52 & 0.19 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.22} \\ \cline{3-7} 
+ & \multirow{-2}{*}{Compas} & Race & 0.52 & 0.52 & 0.19 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.22} \\ \cline{2-7} 
+ &  & Sex & 0.04 & \cellcolor[HTML]{C0C0C0}0.36 & 0.03 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.12} \\ \cline{3-7} 
+\multirow{-6}{*}{\begin{tabular}[c]{@{}c@{}}Optimized\\ Pre-\\ processing\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.04 & \cellcolor[HTML]{C0C0C0}0.10 & 0.03 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.06} \\ \hline
+ &  & Sex & 0.38 & \cellcolor[HTML]{C0C0C0}0.43 & 0.06 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.09} \\ \cline{3-7} 
+ & \multirow{-2}{*}{Adult} & Race & 0.37 & \cellcolor[HTML]{C0C0C0}0.38 & 0.06 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.09} \\ \cline{2-7} 
+ &  & Sex & 0.48 & \cellcolor[HTML]{C0C0C0}0.50 & 0.19 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.20} \\ \cline{3-7} 
+ & \multirow{-2}{*}{Compas} & Race & 0.48 & \cellcolor[HTML]{C0C0C0}0.58 & 0.18 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.31} \\ \cline{2-7} 
+ &  & Sex & 0.04 & \cellcolor[HTML]{C0C0C0}0.64 & 0.03 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.71} \\ \cline{3-7} 
+\multirow{-6}{*}{\begin{tabular}[c]{@{}c@{}}Adversial \\ Debiasing\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.08 & \cellcolor[HTML]{C0C0C0}0.88 & 0.04 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.85} \\ \hline
+ &  & Sex & 0.38 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.24} & 0.06 & \cellcolor[HTML]{C0C0C0}0.05 \\ \cline{3-7} 
+ & \multirow{-2}{*}{Adult} & Race & 0.38 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.04} & 0.06 & \cellcolor[HTML]{C0C0C0}0.04 \\ \cline{2-7} 
+ &  & Sex & 0.52 & \cellcolor[HTML]{C0C0C0}0.97 & 0.19 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.89} \\ \cline{3-7} 
+ & \multirow{-2}{*}{Compas} & Race & 0.52 & \cellcolor[HTML]{C0C0C0}0.68 & 0.19 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.38} \\ \cline{2-7} 
+ &  & Sex & 0.04 & 0.04 & 0.03 & 0.03 \\ \cline{3-7} 
+\multirow{-6}{*}{\begin{tabular}[c]{@{}c@{}}Reject\\ Option\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.04 & 0.04 & 0.03 & 0.03 \\ \hline
+\multicolumn{1}{|l|}{} &  & Sex & 0.42 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.04} & 0.08 & \cellcolor[HTML]{C0C0C0}0.01 \\ \cline{3-7} 
+\multicolumn{1}{|l|}{} & \multirow{-2}{*}{Adult} & Race & 0.42 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.12} & 0.08 & \cellcolor[HTML]{C0C0C0}0.01 \\ \cline{2-7} 
+\multicolumn{1}{|l|}{} &  & Sex & 0.52 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.50} & 0.28 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.31} \\ \cline{3-7} 
+\multicolumn{1}{|l|}{} & \multirow{-2}{*}{Compas} & Race & 0.52 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.50} & 0.28 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.31} \\ \cline{2-7} 
+\multicolumn{1}{|l|}{} &  & Sex & 0.13 & 0.13 & 0.03 & 0.03 \\ \cline{3-7} 
+\multicolumn{1}{|l|}{\multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}FLASH \\ optimizes for\\ AOD \& EOD\end{tabular}}} & \multirow{-2}{*}{German} & Age & 0.13 & 0.13 & 0.03 & 0.03 \\ \hline
 \end{tabular}
 \end{table}
 
 
-Table \ref{tbl:fairness_cost} shows the results of our approach (FLASH) and four other algorithms developed by previous researchers. Two goals were considered here - recall(higher the better) and false alarm(lower the better). We can see that there are very few gray cells and a lot of black cells indicating that achieving fairness damages performance - which bolsters the conclusion made by Berk et al.\cite{berk2017convex}. 
+% \begin{table}[]
+% \centering
+% \scriptsize
+% \caption{Optimizing just for fairness.  
+% Change in  Recall and False alarm before and after bias mitigation. Gray= improvement; black= damage.}
+% \label{tbl:fairness_cost}
+% \begin{tabular}{|l|c|c|r|r|r|r|}
+% \hline
+% \rowcolor[HTML]{C0C0C0} 
+% \cellcolor[HTML]{C0C0C0} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Recall} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}False alarm} \\ \cline{4-7} 
+% \rowcolor[HTML]{C0C0C0} 
+% \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Algorithm} & \multicolumn{1}{l|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset}} & \multicolumn{1}{l|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Protected \\ Attribute\end{tabular}}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}After} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}After} \\ \hline
+% \multicolumn{1}{|c|}{} &  & Sex & 0.83 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.83} & 0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.43} \\ \cline{3-7} 
+% \multicolumn{1}{|c|}{} & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.83} & 0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.35} \\ \cline{2-7} 
+% \multicolumn{1}{|c|}{} &  & Sex & 0.60 & 0.60 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.27} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.29} \\ \cline{3-7} 
+% \multicolumn{1}{|c|}{} & \multirow{-2}{*}{Compas} & Race & 0.62 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.61} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.27} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.34} \\ \cline{2-7} 
+% \multicolumn{1}{|c|}{} &  & Sex & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.69} & \cellcolor[HTML]{FFFFFF}0.66 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.77} \\ \cline{3-7} 
+% \multicolumn{1}{|c|}{\multirow{-6}{*}{Reweighing}} & \multirow{-2}{*}{German} & Age & 0.70 & \cellcolor[HTML]{C0C0C0}0.71 & \cellcolor[HTML]{FFFFFF}0.66 & \cellcolor[HTML]{C0C0C0}0.25 \\ \hline
+%  &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.76} & \cellcolor[HTML]{FFFFFF}0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.35} \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Adult} & Race & 0.83 & 0.83 & \cellcolor[HTML]{FFFFFF}0.34 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.37} \\ \cline{2-7} 
+%  &  & Sex & 0.60 & 0.60 & \cellcolor[HTML]{FFFFFF}0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.29} \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Compas} & Race & 0.62 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.65} & \cellcolor[HTML]{FFFFFF}0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.29} \\ \cline{2-7} 
+%  &  & Sex & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.69} & \cellcolor[HTML]{FFFFFF}0.66 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.36} \\ \cline{3-7} 
+% \multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}Optimized \\ Pre-\\ processing\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.68} & \cellcolor[HTML]{FFFFFF}0.66 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.58} \\ \hline
+%  &  & Sex & 0.82 & \cellcolor[HTML]{C0C0C0}0.83 & 0.35 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.42} \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Adult} & Race & 0.82 & 0.82 & 0.35 & 0.35 \\ \cline{2-7} 
+%  &  & Sex & 0.60 & 0.60 & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.28} \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Compas} & Race & 0.60 & 0.60 & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.28} \\ \cline{2-7} 
+%  &  & Sex & 0.70 & \cellcolor[HTML]{C0C0C0}0.75 & 0.66 & \cellcolor[HTML]{C0C0C0}0.61 \\ \cline{3-7} 
+% \multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}Adversial\\ Debiasing\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.70 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.69} & 0.50 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.72} \\ \hline
+%  &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.24} & 0.34 & \cellcolor[HTML]{C0C0C0}0.05 \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.28} & 0.34 & \cellcolor[HTML]{C0C0C0}0.04 \\ \cline{2-7} 
+%  &  & Sex & 0.62 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.97} & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.89} \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Compas} & Race & 0.62 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.68} & 0.27 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.38} \\ \cline{2-7} 
+%  &  & Sex & 0.70 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.96} & 0.66 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.95} \\ \cline{3-7} 
+% \multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}Reject\\ Option\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.70 & 0.70 & 0.66 & 0.66 \\ \hline
+%  &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.78} & 0.39 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.40} \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.78} & 0.39 & \cellcolor[HTML]{C0C0C0}0.35 \\ \cline{2-7} 
+%  &  & Sex & 0.65 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.63} & 0.38 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.40} \\ \cline{3-7} 
+%  & \multirow{-2}{*}{Compas} & Race & 0.65 & 0.65 & 0.38 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.39} \\ \cline{2-7} 
+%  &  & Sex & 0.74 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.72} & 0.20 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.33} \\ \cline{3-7} 
+% \multirow{-6}{*}{\begin{tabular}[c]{@{}l@{}}FLASH\\ optimizes for\\ AOD \& EOD\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.74 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.68} & 0.20 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.45} \\ \hline
+% \end{tabular}
+% \end{table}
 
-So, we have seen that fairness has a cost. Most of the time, machine learning model looses prediction performance to achieve fairness. That said, multiobjective optimization is needed to make a trade-off between performance and fairness. Here comes our second research question - 
 
-\begin{RQ}
-{\bf RQ2.} Can we optimize machine learning model for both fairness and performance?
-\end{RQ}
+Table \ref{tbl:fairness_cost} shows the results of our approach (FLASH) and four algorithms from prior works. We see that there are a few gray cells and many black cells indicating that achieving fairness damages performance - which bolsters the conclusion made by Berk et al.\cite{berk2017convex}. In summary,  fairness can have a cost. Our next question checks if multiobjective optimization can better trade-off between performance and fairness.  
 
+\subsection{RQ2: Can we optimize machine learning model for both fairness and performance?}
 
-We used above mentioned FLASH algorithm to do multiobjective optimization. We considered four goals together - \textit{recall,false alarm,AOD,EOD}. The first two are related to performance and second two are related to fairness. Recall is higher the better and other three are lower the better. For this part of our study, we used two machine learning models - logistic regression and CART. Model learns from the training set. On the validation set, the model is tuned and recall, false alarm, AOD \& EOD are noted down when tuned learner is applied on the test set. We have chosen four hyperparameters for both the learners to optimize for. For logistic regression - (C,penalty,solver,max\_iter) and for CART - (criterion,splitter,min\_samples\_leaf,min\_samples\_split). Table \ref{tbl:multiobjective_results} shows the results. The ``Before'' column shows results with no tuning and ``After'' column shows tuned results. We can see that for German dataset, we improved three objectives and recall did not decrease. In Adult dataset, we improved three objectives with a minor damage of recall. Compas dataset did not show any improvement. So, the results are clearly indicating that multiobjective  optimization can be extremely beneficial to find the optimal set of hyperparameters to achieve fair outcomes without damaging much predictive performance. 
-
+Here, we applied  FLASH algorithm but this time, we considered four goals together: \textit{recall, false alarm, AOD, EOD}. The first two are related to performance and second two are related to fairness. For
+recall, {\em larger} values are {\em better} while for everything
+else, {\em smaller} is {\em better}.
+ For this part of our study, we used two learning models - logistic regression and CART. 
+ %Afer a model is learnrf from the training set. On the validation set, the model is tuned and recall, false alarm, AOD \& EOD are noted down when tuned learner is applied on the test set.
+ 
+ We have chosen four hyperparameters for both the learners to optimize for. For logistic regression (C, penalty, solver, max\_iter) and for CART - (criterion, splitter , min\_samples\_leaf, min\_samples\_split). Table \ref{tbl:multiobjective_results} shows the results. The ``Before'' column shows results with no tuning and ``After'' column shows tuned results. We can see that for
+ the German dataset, we improved three objectives and recall did not decrease. In the Adult dataset, we improved three objectives with minor damage of recall. 
+ With the
+ Compas dataset, there was no improvement. 
+ 
+ In summary, the results are clearly indicating if  multiobjective  optimization understand {\em all} the goals of learning
+ (fairness {\em and performance}), then it is possible to achieve one without
+ damaging the other. Our last research question asks  what is the cost of this kind of optimization.
 
 \begin{table*}[]
-\tiny
 \centering
-\caption{The change of four goals before and after optimization. Gray cells show improvement and black cells show damage.}
+\footnotesize
+\caption{Optimizing for fairness, lower false alarm and higher recall. Gray=improvement; black=damage.
+Note that, compared to Table~\ref{tbl:fairness_cost}, there is far less damage.}
 \label{tbl:multiobjective_results}
 \begin{tabular}{|l|l|c|r|l|r|l|r|l|
 >{\columncolor[HTML]{FFFFFF}}r |l|}
 \hline
-\cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Reacll} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}c@{}}False \\ alarm\end{tabular}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}AOD} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}EOD} \\ \cline{4-11} 
-\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Model} & \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset} & \multicolumn{1}{l|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Protected \\ Atrribute\end{tabular}}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After \\ \hline
-\multicolumn{1}{|c|}{} &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.78} & 0.39 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.32} & 0.31 & \cellcolor[HTML]{C0C0C0}0.09 & 0.49 & \cellcolor[HTML]{C0C0C0}0.15 \\ \cline{3-11} 
-\multicolumn{1}{|c|}{} & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.80} & 0.39 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.31} & 0.14 & \cellcolor[HTML]{C0C0C0}0.04 & 0.22 & \cellcolor[HTML]{C0C0C0}0.08 \\ \cline{2-11} 
-\multicolumn{1}{|c|}{} &  & Sex & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.38} & 0.38 & 0.24 & 0.24 & 0.29 & 0.29 \\ \cline{3-11} 
-\multicolumn{1}{|c|}{} & \multirow{-2}{*}{Compas} & Race & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.38} & 0.38 & 0.12 & 0.12 & 0.16 & 0.16 \\ \cline{2-11} 
-\multicolumn{1}{|c|}{} &  & Sex & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.2 & 0.2 & 0.12 & 0.12 & 0.04 & 0.04 \\ \cline{3-11} 
-\multicolumn{1}{|c|}{\multirow{-6}{*}{\begin{tabular}[c]{@{}c@{}}Logistic\\ regression\end{tabular}}} & \multirow{-2}{*}{German} & Age & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.2 & 0.2 & 0.44 & 0.44 & 0.08 & 0.08 \\ \hline
- &  & Sex & 0.83 & 0.83 & \cellcolor[HTML]{FFFFFF}0.36 & 0.36 & \cellcolor[HTML]{FFFFFF}0.29 & 0.29 & 0.46 & 0.46 \\ \cline{3-11} 
- & \multirow{-2}{*}{Adult} & Race & 0.83 & 0.83 & \cellcolor[HTML]{FFFFFF}0.36 & 0.36 & \cellcolor[HTML]{FFFFFF}0.14 & 0.14 & 0.24 & 0.24 \\ \cline{2-11} 
- &  & Sex & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}0.35 & 0.35 & \cellcolor[HTML]{FFFFFF}0.25 & 0.25 & 0.29 & 0.29 \\ \cline{3-11} 
- & \multirow{-2}{*}{Compas} & Race & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}0.35 & 0.35 & \cellcolor[HTML]{FFFFFF}0.23 & 0.23 & 0.26 & 0.26 \\ \cline{2-11} 
- &  & Sex & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.5 & \cellcolor[HTML]{C0C0C0}0.29 & \cellcolor[HTML]{FFFFFF}0.15 & \cellcolor[HTML]{C0C0C0}0.1 & 0.14 & \cellcolor[HTML]{C0C0C0}0.03 \\ \cline{3-11} 
-\multirow{-6}{*}{CART} & \multirow{-2}{*}{German} & Age & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.5 & \cellcolor[HTML]{C0C0C0}0.29 & \cellcolor[HTML]{FFFFFF}0.60 & \cellcolor[HTML]{C0C0C0}0.53 & 0.21 & \cellcolor[HTML]{C0C0C0}0.07 \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+\cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Recall} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}c@{}}False\\ alarm\end{tabular}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}AOD} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}EOD} \\ \cline{4-11} 
+\rowcolor[HTML]{C0C0C0} 
+\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Model} & \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset} & \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}c@{}}Protected\\ Attribute\end{tabular}} & Before & After & Before & After & Before & After & Before & After \\ \hline
+ &  & Sex & 0.42 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.04} & 0.08 & \cellcolor[HTML]{C0C0C0}0.01 & 0.31 & \cellcolor[HTML]{C0C0C0}0.03 & 0.49 & \cellcolor[HTML]{C0C0C0}0.05 \\ \cline{3-11} 
+ & \multirow{-2}{*}{Adult} & Race & 0.42 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.12} & 0.08 & \cellcolor[HTML]{C0C0C0}0.01 & 0.14 & \cellcolor[HTML]{C0C0C0}0.05 & 0.21 & \cellcolor[HTML]{C0C0C0}0.03 \\ \cline{2-11} 
+ &  & Sex & 0.52 & 0.52 & 0.28 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.31} & 0.22 & 0.22 & 0.27 & 0.27 \\ \cline{3-11} 
+ & \multirow{-2}{*}{Compas} & Race & 0.52 & 0.52 & 0.28 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.31} & 0.25 & \cellcolor[HTML]{C0C0C0}0.15 & 0.34 & \cellcolor[HTML]{C0C0C0}0.23 \\ \cline{2-11} 
+ &  & Sex & 0.13 & 0.13 & 0.03 & 0.03 & 0.16 & 0.16 & 0.03 & 0.03 \\ \cline{3-11} 
+\multirow{-6}{*}{\begin{tabular}[c]{@{}c@{}}Logistic\\ regression\end{tabular}} & \multirow{-2}{*}{German} & Age & 0.13 & 0.13 & 0.03 & 0.03 & 0.14 & 0.14 & 0.05 & 0.05 \\ \hline
+ &  & Sex & 0.41 & 0.41 & 0.07 & 0.07 & 0.30 & 0.30 & 0.49 & 0.49 \\ \cline{3-11} 
+ & \multirow{-2}{*}{Adult} & Race & 0.41 & 0.41 & 0.07 & 0.07 & 0.14 & 0.14 & 0.22 & 0.22 \\ \cline{2-11} 
+ &  & Sex & 0.53 & 0.53 & 0.25 & 0.25 & 0.19 & 0.19 & 0.20 & 0.20 \\ \cline{3-11} 
+ & \multirow{-2}{*}{Compas} & Race & 0.53 & 0.53 & 0.25 & 0.25 & 0.10 & 0.10 & 0.13 & 0.13 \\ \cline{2-11} 
+ &  & Sex & 0.13 & 0.13 & 0.05 & \cellcolor[HTML]{C0C0C0}0.03 & 0.20 & \cellcolor[HTML]{C0C0C0}0.18 & 0.10 & \cellcolor[HTML]{C0C0C0}0.07 \\ \cline{3-11} 
+\multirow{-6}{*}{CART} & \multirow{-2}{*}{German} & Age & 0.13 & 0.13 & 0.05 & \cellcolor[HTML]{C0C0C0}0.03 & 0.13 & \cellcolor[HTML]{C0C0C0}0.11 & 0.03 & \cellcolor[HTML]{C0C0C0}0.03 \\ \hline
 \end{tabular}
 \end{table*}
 
 
+% \begin{table*}[]
+% \centering
+% \footnotesize
+% \caption{Optimizing for fairness, lower false alarm and higher recall. Gray=improvement; black=damage.
+% Note that, compared to Table~\ref{tbl:fairness_cost}, there is far less damage.}
+% \label{tbl:multiobjective_results}
+% \begin{tabular}{|l|l|c|r|l|r|l|r|l|
+% >{\columncolor[HTML]{FFFFFF}}r |l|}
+% \hline
+% \cellcolor[HTML]{C0C0C0} & \cellcolor[HTML]{C0C0C0} & \multicolumn{1}{l|}{\cellcolor[HTML]{C0C0C0}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}Recall} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}c@{}}False \\ alarm\end{tabular}} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}AOD} & \multicolumn{2}{c|}{\cellcolor[HTML]{C0C0C0}EOD} \\ \cline{4-11} 
+% \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Model} & \multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Dataset} & \multicolumn{1}{l|}{\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Protected \\ Attribute\end{tabular}}} & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Before} & \cellcolor[HTML]{C0C0C0}After \\ \hline
+% \multicolumn{1}{|c|}{} &  & Sex & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.78} & 0.39 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.32} & 0.31 & \cellcolor[HTML]{C0C0C0}0.09 & 0.49 & \cellcolor[HTML]{C0C0C0}0.15 \\ \cline{3-11} 
+% \multicolumn{1}{|c|}{} & \multirow{-2}{*}{Adult} & Race & 0.83 & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} 0.80} & 0.39 & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} 0.31} & 0.14 & \cellcolor[HTML]{C0C0C0}0.04 & 0.22 & \cellcolor[HTML]{C0C0C0}0.08 \\ \cline{2-11} 
+% \multicolumn{1}{|c|}{} &  & Sex & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.38} & 0.38 & 0.24 & 0.24 & 0.29 & 0.29 \\ \cline{3-11} 
+% \multicolumn{1}{|c|}{} & \multirow{-2}{*}{Compas} & Race & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} 0.38} & 0.38 & 0.12 & 0.12 & 0.16 & 0.16 \\ \cline{2-11} 
+% \multicolumn{1}{|c|}{} &  & Sex & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.2 & 0.2 & 0.12 & 0.12 & 0.04 & 0.04 \\ \cline{3-11} 
+% \multicolumn{1}{|c|}{\multirow{-6}{*}{\begin{tabular}[c]{@{}c@{}}Logistic\\ regression\end{tabular}}} & \multirow{-2}{*}{German} & Age & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.2 & 0.2 & 0.44 & 0.44 & 0.08 & 0.08 \\ \hline
+%  &  & Sex & 0.83 & 0.83 & \cellcolor[HTML]{FFFFFF}0.36 & 0.36 & \cellcolor[HTML]{FFFFFF}0.29 & 0.29 & 0.46 & 0.46 \\ \cline{3-11} 
+%  & \multirow{-2}{*}{Adult} & Race & 0.83 & 0.83 & \cellcolor[HTML]{FFFFFF}0.36 & 0.36 & \cellcolor[HTML]{FFFFFF}0.14 & 0.14 & 0.24 & 0.24 \\ \cline{2-11} 
+%  &  & Sex & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}0.35 & 0.35 & \cellcolor[HTML]{FFFFFF}0.25 & 0.25 & 0.29 & 0.29 \\ \cline{3-11} 
+%  & \multirow{-2}{*}{Compas} & Race & 0.65 & 0.65 & \cellcolor[HTML]{FFFFFF}0.35 & 0.35 & \cellcolor[HTML]{FFFFFF}0.23 & 0.23 & 0.26 & 0.26 \\ \cline{2-11} 
+%  &  & Sex & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.5 & \cellcolor[HTML]{C0C0C0}0.29 & \cellcolor[HTML]{FFFFFF}0.15 & \cellcolor[HTML]{C0C0C0}0.1 & 0.14 & \cellcolor[HTML]{C0C0C0}0.03 \\ \cline{3-11} 
+% \multirow{-6}{*}{CART} & \multirow{-2}{*}{German} & Age & 0.74 & 0.74 & \cellcolor[HTML]{FFFFFF}0.5 & \cellcolor[HTML]{C0C0C0}0.29 & \cellcolor[HTML]{FFFFFF}0.60 & \cellcolor[HTML]{C0C0C0}0.53 & 0.21 & \cellcolor[HTML]{C0C0C0}0.07 \\ \hline
+% \end{tabular}
+% \end{table*}
 
-We have made fairness mitigation problem a multiobjective optimization problem. We wanted to check the cost of this optimization. Hence, our third RQ. 
+
+\subsection{ RQ3. How much time does optimization take?}
+
+Default logistic regression takes 0.56s, 0.15s and 0.11s for Adult, Compas and German dataset respectively. When we apply hyperparameter optimization, the cumulative time for training, tuning and testing become 16.33s, 4.34s and 3.55s for those datasets. 
+We assert that  runtimes of less than 20 seconds is a relatively small price to pay to ensure fairness. 
+
+As to larger, more complex problems, Nair et al.~\cite{8469102} reports
+that FLASH scales to problems with larger order of magnitude than other optimizers. It is a matter for future research to see if such scale is possible/required to handle fairness of SE data. 
 
 
-\begin{RQ}
-{\bf RQ3.} How much time optimization takes?
-\end{RQ}
-
-Default logistic regression takes 0.56s, 0.15s and 0.11s for Adult, Compas and German dataset respectively. While when we apply hyperparameter optimization, the cumulative time for training, tuning and testing become 16.33s, 4.34s and 3.55s for those datasets. 
+\section{Conclusion \& Future Work} Our experiments show that it might be  possible to make software fair, without compromising other design goals (like predictive performance). Like Brun et al. \cite{Brun:2018:SF:3236024.3264838}, we   propose that software bias detection and mitigation should be included in the software life-cycle. In agile practices, before any release, software should go through fairness testing and mitigation. 
 
 
-\section{Conclusion \& Future Work} Software community has acknowledged the severity of software fairness. But till today, there have been a very few research works done on this field. Our work has shown a path to make machine learning models fair. In this study, we only considered logistic regression and CART model. In future we will explore more learning models. More exploration may change our results. We used only three popular datasets which are pretty common in fairness domain. All these datasets are small and not a great representative of real world scenario. Future work requires more and more real world data. We request software companies to make their data available which they think might be beneficial for bias related study. Data is not the only challenge,  domain knowledge is important to understand the significance of protected attributes. Can we not train our model without those attributes (gender,race,age)? Only domain experts can answer that. So, future work is not entirely in our hand. We need support and directions from domain professionals. As a researcher, we propose software bias detection and mitigation should be included in the software life-cycle. In the agile practices, before making any release, software must go through fairness testing and mitigation phase. 
+In this study, we only considered logistic regression and CART decision tree. In the future, we will explore more learning models. Another area to explore in the future is more data sets.
+Here, we used the same three datasets used by other  publications in this area. All these datasets are small and so may not be representative of 
+other real world scenarios. Ideally,  software companies should consider making  their data available which they think might be beneficial for bias related study. Data is not the only challenge,  domain knowledge is important to understand the significance of protected attributes. For example,
+can/should we  train our model without
+any protected attributes at all (gender, race, age)? In our experience,  domain experts have strong opinions
+on that matter.
 
 
 
+\balance
 \bibliographystyle{IEEEtran}
-\bibliography{Mybib}
+\bibliography{bibliography}
+
+
+
 
 \end{document}
